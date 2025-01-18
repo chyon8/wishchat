@@ -1,12 +1,7 @@
 import SurveyChat from "@/components/SurveyChat";
 
 const Homepage = async () => {
-  return (
-    <>
-      <p>homepage</p>
-      <SurveyChat />
-    </>
-  );
+  return <SurveyChat />;
 };
 
 export default Homepage;
