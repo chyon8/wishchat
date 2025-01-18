@@ -8,14 +8,41 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function SurveyChat() {
   //test
+
   const testSummary = {
-    overview: "test",
-    requirements: ["test"],
-    environment: "test",
-    features: [{ name: "test", description: "test" }],
+    overview:
+      "이 프로젝트는 웹사이트/웹앱과 모바일 앱을 제작할 수 있는 노코드 서비스 개발을 목표로 합니다. 일반 개인 사용자와 소규모 기업 및 스타트업을 주요 타겟 고객층으로 하고 있습니다.",
+    requirements: [
+      "웹사이트/웹앱 제작 기능",
+      "모바일 앱 제작 기능",
+      "데이터베이스 연동",
+      "서버리스 기능 제공\n다른 기능도 있으면 좋겠어요",
+      "협업 및 공유 기능",
+      "자동화된 배포 기능",
+    ],
+    environment: "개발 환경 및 언어 제안 부탁드립니다",
+    features: [
+      "웹사이트/웹앱 제작",
+      "모바일 앱 제작",
+      "데이터베이스 연동",
+      "",
+      "협업 및 공유 기능",
+      "자동화된 배포 기능",
+    ],
   };
 
   const [state, setState] = useState<SurveyState>({
@@ -35,13 +62,40 @@ export default function SurveyChat() {
     currentIndex: 0,
   });
 
+  const { toast } = useToast();
+
   const [input, setInput] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showTextInput, setShowTextInput] = useState(false);
+  const [activeTab, setActiveTab] = useState("preview");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
-
   const TOTAL_QUESTIONS = 5;
+
+  const [registrationData, setRegistrationData] = useState<RegistrationData>({
+    email: "",
+    phone: "",
+    projectData: {
+      overview: "",
+      requirements: [],
+      environment: "",
+      features: [],
+    },
+  });
+
+  useEffect(() => {
+    if (state.summary) {
+      setRegistrationData((prev) => ({
+        ...prev,
+        projectData: {
+          overview: state.summary?.overview || "",
+          requirements: state.summary?.requirements || [],
+          environment: state.summary?.environment || "",
+          features: state.summary?.features || [],
+        },
+      }));
+    }
+  }, [state.summary]);
 
   useEffect(() => {
     const savedState = localStorage.getItem("surveyState");
@@ -65,38 +119,25 @@ export default function SurveyChat() {
     localStorage.setItem("surveyState", JSON.stringify(state));
   }, [state]);
 
-  const handleRegister = async () => {
-    if (isRegistering || isRegistered) return;
-
-    setIsRegistering(true);
-    try {
-      const projectData = {
-        overview: state.summary?.overview,
-        requirements: state.summary?.requirements,
-        environment: state.summary?.environment,
-        features: state.summary?.features,
-        answers: state.answers,
-      };
-
-      const response = await fetch("/api/register-project", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(projectData),
-      });
-
-      if (!response.ok) throw new Error("등록 실패");
-
-      setIsRegistered(true);
-    } catch (error) {
-      console.error("등록 오류:", error);
-      setState((prev) => ({
-        ...prev,
-        stage: "summary",
-        //error: "프로젝트 등록 중 오류가 발생했습니다.",
-      }));
-    } finally {
-      setIsRegistering(false);
-    }
+  const handleReset = () => {
+    localStorage.removeItem("surveyState");
+    setState({
+      stage: "initial",
+      currentQuestion: {
+        text: "어떤 서비스를 만들고 싶으세요?",
+        type: "text",
+        options: [],
+      },
+      answers: [],
+      summary: null,
+      isLoading: false,
+      progress: 0,
+      error: null,
+      currentIndex: 0,
+    });
+    setInput("");
+    setSelectedOptions([]);
+    setShowTextInput(false);
   };
 
   const handleNext = async () => {
@@ -148,6 +189,16 @@ export default function SurveyChat() {
           answers: newAnswers,
           isLoading: false,
           progress: 100,
+        }));
+
+        setRegistrationData((prev) => ({
+          ...prev,
+          projectData: {
+            overview: data.summary.overview || "",
+            requirements: data.summary.requirements || [],
+            environment: data.summary.environment || "",
+            features: data.summary.features || [],
+          },
         }));
       } else {
         const response = await fetch("/api/chat/question", {
@@ -213,27 +264,6 @@ export default function SurveyChat() {
     }
   };
 
-  const handleReset = () => {
-    localStorage.removeItem("surveyState");
-    setState({
-      stage: "initial",
-      currentQuestion: {
-        text: "어떤 서비스를 만들고 싶으세요?",
-        type: "text",
-        options: [],
-      },
-      answers: [],
-      summary: null,
-      isLoading: false,
-      progress: 0,
-      error: null,
-      currentIndex: 0,
-    });
-    setInput("");
-    setSelectedOptions([]);
-    setShowTextInput(false);
-  };
-
   const renderMultipleChoice = () => (
     <div className="space-y-2">
       {state.currentQuestion?.options.map((option, i) => (
@@ -294,54 +324,287 @@ export default function SurveyChat() {
     </div>
   );
 
-  const renderSummary = () => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">프로젝트 요약</h2>
-      <div>
-        <h3 className="font-semibold">프로젝트 개요</h3>
-        <p>{state.summary?.overview}</p>
+  const renderSummary = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+
+    const validateForm = () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}$/;
+
+      if (!emailRegex.test(registrationData.email)) {
+        toast({
+          variant: "destructive",
+          title: "이메일 형식이 올바르지 않습니다",
+          description: "올바른 이메일 주소를 입력해주세요.",
+        });
+        return false;
+      }
+
+      if (!phoneRegex.test(registrationData.phone)) {
+        toast({
+          variant: "destructive",
+          title: "전화번호 형식이 올바르지 않습니다",
+          description: "01012345678 형식으로 입력해주세요.",
+        });
+        return false;
+      }
+
+      return true;
+    };
+
+    const handleRegister = async () => {
+      if (!validateForm()) return;
+
+      setIsRegistering(true);
+      try {
+        const response = await fetch("/api/register-project", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ registrationData }),
+        });
+
+        if (!response.ok) throw new Error("등록 실패");
+
+        toast({
+          title: "프로젝트가 등록되었습니다",
+          description: "24시간안에 연락드리겠습니다..",
+        });
+
+        setIsModalOpen(false);
+        // handleReset();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "등록 실패",
+          description:
+            "프로젝트 등록 중 오류가 발생했습니다. 다시 시도해주세요.",
+        });
+      } finally {
+        setIsRegistering(false);
+      }
+    };
+
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold">프로젝트 요약</h2>
+
+        <div className="flex space-x-4">
+          <button
+            className={`p-2 ${
+              activeTab === "preview" ? "border-b-2 border-blue-500" : ""
+            }`}
+            onClick={() => setActiveTab("preview")}
+          >
+            미리보기
+          </button>
+          <button
+            className={`p-2 ${
+              activeTab === "edit" ? "border-b-2 border-blue-500" : ""
+            }`}
+            onClick={() => setActiveTab("edit")}
+          >
+            수정
+          </button>
+        </div>
+        {/* code for summary */}
+        {activeTab === "preview" ? (
+          <>
+            <div>
+              <h3 className="font-semibold">프로젝트 개요</h3>
+              <p>{registrationData.projectData.overview}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">필요 요소</h3>
+              <ul className="list-disc pl-5">
+                {registrationData.projectData.requirements.map((req, i) => (
+                  <li key={i}>{req}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold">개발 환경/언어</h3>
+              <p>{registrationData.projectData.environment}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">주요 기능</h3>
+              <ul className="list-disc pl-5">
+                {registrationData.projectData.features.map((feature, i) => (
+                  <li key={i}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+          </>
+        ) : (
+          <>
+            {" "}
+            <div>
+              <h3 className="font-semibold mb-2">프로젝트 개요</h3>
+              <Textarea
+                value={registrationData.projectData.overview}
+                onChange={(e) =>
+                  setRegistrationData((prev) => ({
+                    ...prev,
+                    projectData: {
+                      ...prev.projectData,
+                      overview: e.target.value,
+                    },
+                  }))
+                }
+                className="min-h-[100px]"
+              />
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">필요 요소</h3>
+              {registrationData.projectData.requirements.map((req, i) => (
+                <Textarea
+                  key={i}
+                  value={req}
+                  onChange={(e) => {
+                    const newReqs = [
+                      ...registrationData.projectData.requirements,
+                    ];
+                    newReqs[i] = e.target.value;
+                    setRegistrationData((prev) => ({
+                      ...prev,
+                      projectData: {
+                        ...prev.projectData,
+                        requirements: newReqs,
+                      },
+                    }));
+                  }}
+                  className="mb-2"
+                />
+              ))}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">개발 환경/언어</h3>
+              <Textarea
+                value={registrationData.projectData.environment}
+                onChange={(e) =>
+                  setRegistrationData((prev) => ({
+                    ...prev,
+                    projectData: {
+                      ...prev.projectData,
+                      environment: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">주요 기능</h3>
+
+              {registrationData.projectData.features.map((feature, i) => (
+                <Textarea
+                  key={i}
+                  value={feature}
+                  onChange={(e) => {
+                    const newFeatures = [
+                      ...registrationData.projectData.features,
+                    ];
+                    newFeatures[i] = e.target.value;
+                    setRegistrationData((prev) => ({
+                      ...prev,
+                      projectData: {
+                        ...prev.projectData,
+                        features: newFeatures,
+                      },
+                    }));
+                  }}
+                  className="mb-2"
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* code for summary */}
+
+        <div className="flex gap-2 mt-6">
+          <Button
+            variant="default"
+            className="flex-1"
+            onClick={() => setIsModalOpen(true)}
+          >
+            프로젝트 등록하기
+          </Button>
+          <Button variant="outline" className="flex-1" onClick={handleReset}>
+            새로운 상담 시작
+          </Button>
+        </div>
+
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>프로젝트 등록</DialogTitle>
+              <DialogDescription>
+                프로젝트 등록을 위해 연락처 정보를 입력해주세요.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                  이메일
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="example@email.com"
+                  value={registrationData.email}
+                  onChange={(e) =>
+                    setRegistrationData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium">
+                  전화번호
+                </label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="01012345678"
+                  value={registrationData.phone}
+                  onChange={(e) =>
+                    setRegistrationData((prev) => ({
+                      ...prev,
+                      phone: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+                disabled={isRegistering}
+              >
+                취소
+              </Button>
+              <Button onClick={handleRegister} disabled={isRegistering}>
+                {isRegistering ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    등록 중...
+                  </>
+                ) : (
+                  "등록하기"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-      <div>
-        <h3 className="font-semibold">필요 요소</h3>
-        <ul className="list-disc pl-5">
-          {state.summary?.requirements.map((req, i) => (
-            <li key={i}>{req}</li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h3 className="font-semibold">개발 환경/언어</h3>
-        <p>{state.summary?.environment}</p>
-      </div>
-      <div>
-        <h3 className="font-semibold">주요 기능</h3>
-        <ul className="list-disc pl-5">
-          {state.summary?.features.map((feature, i) => (
-            <li key={i}>
-              <strong>{feature.name}:</strong> {feature.description}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="flex gap-2 mt-6">
-        <Button
-          variant="default"
-          className="flex-1"
-          onClick={handleRegister}
-          disabled={isRegistering || isRegistered}
-        >
-          {isRegistering ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : isRegistered ? (
-            "등록 완료!"
-          ) : (
-            "프로젝트 등록하기"
-          )}
-        </Button>
-        <Button onClick={handleReset}>새로운 상담 시작</Button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     if (state.error) {

@@ -32,7 +32,5 @@ export const SUMMARY_SYSTEM_PROMPT = `지금까지의 답변을 바탕으로 최
   "overview": "프로젝트 개요",
   "requirements": ["필요 요소1", "필요 요소2"],
   "environment": "개발 환경/언어 or '개발환경 및 언어 제안 부탁드립니다'",
-  "features": [
-    { "name": "핵심 기능 1", "description": "설명" }
-  ]
+  "features": ["핵심 기능1", "핵심기능2", ...]
 }`;

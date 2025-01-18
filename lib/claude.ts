@@ -14,6 +14,7 @@ const anthropic = new Anthropic({
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validator: (response: any) => response is T,
   maxRetries: number = 3
 ): Promise<T> {

@@ -26,8 +26,24 @@ interface SummaryResponse {
   overview: string;
   requirements: string[];
   environment: string;
+  features: string[];
+}
+/*
   features: Array<{
     name: string;
     description: string;
+ 
   }>;
+}   */
+
+interface RegistrationData {
+  email: string;
+  phone: string;
+  projectData: {
+    overview: string;
+    requirements: string[];
+    environment: string;
+    // features: Array<{ name: string; description: string }>;
+    features: string[];
+  };
 }
