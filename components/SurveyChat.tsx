@@ -21,8 +21,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function SurveyChat() {
-  //test
-
+  /*
   const testSummary = {
     overview:
       "이 프로젝트는 웹사이트/웹앱과 모바일 앱을 제작할 수 있는 노코드 서비스 개발을 목표로 합니다. 일반 개인 사용자와 소규모 기업 및 스타트업을 주요 타겟 고객층으로 하고 있습니다.",
@@ -44,18 +43,19 @@ export default function SurveyChat() {
       "자동화된 배포 기능",
     ],
   };
+*/
 
   const [state, setState] = useState<SurveyState>({
-    //stage: "initial",
-    stage: "summary",
+    stage: "initial",
+    //stage: "summary",
     currentQuestion: {
       text: "어떤 서비스를 만들고 싶으세요?",
       type: "text",
       options: [],
     },
     answers: [],
-    //summary: null,
-    summary: testSummary,
+    summary: null,
+    //summary: testSummary,
     isLoading: false,
     progress: 0,
     error: null,
@@ -367,7 +367,7 @@ export default function SurveyChat() {
 
         toast({
           title: "프로젝트가 등록되었습니다",
-          description: "24시간안에 연락드리겠습니다..",
+          description: "24시간안에 연락드리겠습니다.",
         });
 
         setIsModalOpen(false);

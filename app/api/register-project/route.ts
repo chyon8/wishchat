@@ -1,16 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
+import { EmailTemplate } from "@/components/email-template";
+import { Resend } from "resend";
+import { SENDER_EMAIL, APP_NAME, RECIEVE_EMAIL } from "@/lib/constants";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    // Parse the request body
     const { registrationData } = await req.json();
+    const { phone, email, projectData } = registrationData;
 
-    // Log the registrationData to the console
-    console.log("Received registrationData:", registrationData);
+    // Send an email using Resend
+    const { error } = await resend.emails.send({
+      from: `${APP_NAME} <${SENDER_EMAIL}>`,
+      to: RECIEVE_EMAIL,
+      subject: "새로운 프로젝트 등록!",
+      react: EmailTemplate({ phone, email, projectData }),
+    });
 
-    // Return a response (you can modify the response as needed)
+    // Handle email send errors
+    if (error) {
+      console.error("Failed to send email:", error);
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 }
+      );
+    }
+
+    // Respond with success
     return NextResponse.json({
-      message: "Data received successfully",
+      message: "Data received and email sent successfully",
       registrationData,
     });
   } catch (error) {
