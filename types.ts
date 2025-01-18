@@ -6,6 +6,7 @@ interface SurveyState {
   isLoading: boolean;
   progress: number;
   error: string | null;
+  currentIndex: number;
 }
 
 interface QuestionResponse {
@@ -16,7 +17,9 @@ interface QuestionResponse {
 
 interface Answer {
   question: string;
-  answer: string;
+  answer: string | string[];
+  type: "text" | "multiple-choice";
+  questionData: QuestionResponse; // 질문 데이터 전체를 저장
 }
 
 interface SummaryResponse {
