@@ -8,11 +8,21 @@ import { QUESTION_SYSTEM_PROMPT, SUMMARY_SYSTEM_PROMPT } from "./prompts";
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
 
+interface ResponseWithContent {
+  content?: { text: string }[];
+  text?: string;
+  // SummaryResponse의 필드들을 포함
+  overview?: string;
+  requirements?: string[];
+  environment?: string;
+  features?: string[];
+}
+
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 });
 
-async function retryOperation<T>(
+async function retryOperation<T extends ResponseWithContent>(
   operation: () => Promise<T>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validator: (response: any) => response is T,
@@ -24,7 +34,9 @@ async function retryOperation<T>(
     try {
       const response = await operation();
       const parsedResponse = JSON.parse(
-        typeof response === "string" ? response : response.content[0].text
+        typeof response === "string"
+          ? response
+          : response.content?.[0]?.text || ""
       );
 
       if (!validator(parsedResponse)) {
@@ -62,7 +74,7 @@ export async function getNextQuestion(answers: Answer[]) {
         },
       ],
     });
-    return response;
+    return response as ResponseWithContent;
   }, validateQuestionResponse);
 }
 
@@ -81,6 +93,6 @@ export async function getSummary(answers: Answer[]) {
         },
       ],
     });
-    return response;
+    return response as ResponseWithContent;
   }, validateSummaryResponse);
 }

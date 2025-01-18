@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SurveyState {
   stage: "initial" | "questioning" | "summary";
   currentQuestion: QuestionResponse | null;
@@ -36,6 +37,7 @@ interface SummaryResponse {
   }>;
 }   */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface RegistrationData {
   email: string;
   phone: string;
