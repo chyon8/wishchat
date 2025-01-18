@@ -223,6 +223,29 @@ export default function SurveyChat() {
             </Button>
           </form>
         )}
+
+        {state.stage !== "initial" && (
+          <Button
+            onClick={() => {
+              localStorage.removeItem("surveyState");
+              setState({
+                stage: "initial",
+                currentQuestion: {
+                  text: "어떤 서비스를 만들고 싶으세요?",
+                  type: "text",
+                  options: [],
+                },
+                answers: [],
+                summary: null,
+                isLoading: false,
+                progress: 0,
+                error: null,
+              });
+            }}
+          >
+            새로운 상담 시작
+          </Button>
+        )}
       </div>
     );
   };

@@ -13,14 +13,16 @@ import {
 const Menu = () => {
   return (
     <div className="flex justify-end gap-3">
-      <nav className="hidden md:flex w-full max-w-xs gap-1">
+      <nav className="md:flex w-full max-w-xs gap-1">
         <ModeToggle />
         <Button asChild variant="ghost">
           <Link target="_blank" href="https://www.wishket.com/">
-            <Cat /> 위시켓으로
+            <Cat /> <span className="hidden sm:inline">위시켓으로</span>
           </Link>
         </Button>
       </nav>
+
+      {/*
       <nav className="md:hidden">
         <Sheet>
           <SheetTrigger className="align-middle">
@@ -39,6 +41,7 @@ const Menu = () => {
           </SheetContent>
         </Sheet>
       </nav>
+*/}
     </div>
   );
 };

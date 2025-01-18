@@ -1,7 +1,8 @@
-import Image from "next/image";
+//import Image from "next/image";
 import Link from "next/link";
 import { APP_NAME } from "@/lib/constants";
 import Menu from "./menu";
+import { Cat } from "lucide-react";
 
 const Header = () => {
   return (
@@ -18,12 +19,13 @@ const Header = () => {
               priority={true}
             />
             */}
-            <span className="hidden lg:block font-bold text-2xl ml-3">
-              {APP_NAME}
-            </span>
+            <Cat />
+            <span className="font-bold text-2xl ml-3">{APP_NAME}</span>
           </Link>
         </div>
-        <div className="hidden md:block"></div>
+
+        {/*   <div className="hidden md:block"></div> 
+        <Menu /> */}
         <Menu />
       </div>
     </header>
