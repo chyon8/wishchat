@@ -42,25 +42,25 @@ const ModeToggle = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+        <DropdownMenuLabel>화면 모드</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           checked={theme === "system"}
           onClick={() => setTheme("system")}
         >
-          System
+          시스템
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={theme === "dark"}
           onClick={() => setTheme("dark")}
         >
-          Dark
+          다크 모드
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={theme === "light"}
           onClick={() => setTheme("light")}
         >
-          Light
+          기본 모드
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>
