@@ -21,33 +21,8 @@ import {
 } from "@/components/ui/dialog";
 
 export default function SurveyChat() {
-  /*
-  const testSummary = {
-    overview:
-      "이 프로젝트는 웹사이트/웹앱과 모바일 앱을 제작할 수 있는 노코드 서비스 개발을 목표로 합니다. 일반 개인 사용자와 소규모 기업 및 스타트업을 주요 타겟 고객층으로 하고 있습니다.",
-    requirements: [
-      "웹사이트/웹앱 제작 기능",
-      "모바일 앱 제작 기능",
-      "데이터베이스 연동",
-      "서버리스 기능 제공\n다른 기능도 있으면 좋겠어요",
-      "협업 및 공유 기능",
-      "자동화된 배포 기능",
-    ],
-    environment: "개발 환경 및 언어 제안 부탁드립니다",
-    features: [
-      "웹사이트/웹앱 제작",
-      "모바일 앱 제작",
-      "데이터베이스 연동",
-      "",
-      "협업 및 공유 기능",
-      "자동화된 배포 기능",
-    ],
-  };
-*/
-
   const [state, setState] = useState<SurveyState>({
     stage: "initial",
-    //stage: "summary",
     currentQuestion: {
       text: "어떤 서비스를 만들고 싶으세요?",
       type: "text",
@@ -55,7 +30,6 @@ export default function SurveyChat() {
     },
     answers: [],
     summary: null,
-    //summary: testSummary,
     isLoading: false,
     progress: 0,
     error: null,
