@@ -172,6 +172,14 @@ export default function SurveyChat() {
       }
 
       if (newAnswers.length >= TOTAL_QUESTIONS) {
+        //서머리로 상태 변경 먼저
+        setState((prev) => ({
+          ...prev,
+          stage: "summary",
+          isLoading: true,
+          progress: 100,
+        }));
+
         const response = await fetch("/api/chat/summary", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -184,11 +192,9 @@ export default function SurveyChat() {
 
         setState((prev) => ({
           ...prev,
-          stage: "summary",
           summary: data.summary,
           answers: newAnswers,
           isLoading: false,
-          progress: 100,
         }));
 
         setRegistrationData((prev) => ({
@@ -228,6 +234,7 @@ export default function SurveyChat() {
       }
     } catch (error) {
       console.error("Error:", error);
+
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -302,7 +309,7 @@ export default function SurveyChat() {
   const renderTextInput = () => (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <Input
+        <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="답변을 입력하세요..."
@@ -609,10 +616,25 @@ export default function SurveyChat() {
   const renderContent = () => {
     if (state.error) {
       return (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{state.error}</AlertDescription>
-        </Alert>
+        <>
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{state.error}</AlertDescription>
+          </Alert>
+          <Button onClick={handleReset}>새로운 상담 시작</Button>
+        </>
+      );
+    }
+
+    //로딩
+    if (state.stage === "summary" && !state.summary) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+          <span className="ml-3 text-gray-500">
+            프로젝트 내용을 요약하고있습니다...
+          </span>
+        </div>
       );
     }
 
@@ -655,7 +677,7 @@ export default function SurveyChat() {
             )}
           </Button>
         </div>
-        {state.stage !== "initial" && (
+        {(state.stage !== "initial" || state.error) && (
           <Button onClick={handleReset}>새로운 상담 시작</Button>
         )}
       </div>
@@ -663,11 +685,48 @@ export default function SurveyChat() {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardContent className="pt-6">
-        <Progress value={state.progress} className="mb-6" />
-        {renderContent()}
-      </CardContent>
-    </Card>
+    <>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardContent className="pt-6">
+          <Progress value={state.progress} className="mb-6" />
+          {renderContent()}
+        </CardContent>
+      </Card>
+
+      {state.stage == "initial" && (
+        <div className="w-full max-w-2xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={(e) => {
+              setInput(e.currentTarget.textContent || "");
+              handleNext();
+            }}
+          >
+            AI 챗봇을 만들고 싶어요
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={(e) => {
+              setInput(e.currentTarget.textContent || "");
+              handleNext();
+            }}
+          >
+            쇼핑몰을 만들고싶어요
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={(e) => {
+              setInput(e.currentTarget.textContent || "");
+              handleNext();
+            }}
+          >
+            업무 자동화를 하고싶어요
+          </Button>
+        </div>
+      )}
+    </>
   );
 }

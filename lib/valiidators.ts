@@ -5,7 +5,6 @@ export function validateQuestionResponse(
   if (!response || typeof response !== "object") return false;
   if (typeof response.text !== "string") return false;
   if (!["text", "multiple-choice"].includes(response.type)) return false;
-
   if (response.type === "multiple-choice") {
     if (!Array.isArray(response.options)) return false;
     if (response.options.length !== 5) return false;
