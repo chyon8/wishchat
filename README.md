@@ -10,23 +10,104 @@ pnpm dev
 bun dev
 ```
 
-프로젝트 상담을 도와주는 AI 채팅입니다. 만들고 싶은 서비스 아이디어만 있으면 요구사항을 정리해줍니다.
+프로젝트 상담을 도와주는 AI 채팅입니다. 만들고 싶은 서비스 아이디어만 있으면 요구사항을 정리해줍니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 소개
 
-## Learn More
+이 프로젝트는 아이디어만 있고 기술적인 지식이 부족한 고객이 **위시켓 프로젝트 등록**을 쉽게 할 수 있도록 돕기 위해 개발되었습니다.  
+유저가 간단한 인풋을 통해 프로젝트 아이디어를 구체화하고, 이를 기반으로 프로젝트 등록까지 이어지도록 돕습니다.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 주요 기능
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **아이디어 입력 및 저장**
+   - 유저가 만들고 싶은 서비스에 대한 인풋을 제공.
+   - 로컬스토리지에 입력한 데이터를 저장 및 로드.
+2. **대화 기반 구체화**
 
-## Deploy on Vercel
+   - 입력된 내용을 기반으로 추가 질문 및 선택지를 생성.
+   - 대화 내용을 저장하여 컨텍스트를 유지하고, 프롬프트에 재전송.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **응답 검증 및 실패 처리**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   - 응답은 JSON 타입으로 반환되도록 강제.
+   - 타입 검증 및 유효성 검사를 수행.
+   - 반환값이 조건에 맞지 않을 경우, 최대 3회 재시도 후 실패 처리.
 
-# wishchat
+4. **결과 정리 및 수정**
+
+   - 질문 및 대답 내용을 바탕으로 결과를 정리.
+   - 미리보기/수정 탭에서 결과를 확인 및 수정 가능.
+
+5. **프로젝트 등록 및 이메일 발송**
+
+   - 유저 정보를 입력(전화번호, 이메일)받아 프로젝트 내용을 이메일로 전송.
+
+6. **UX 개선 요소**
+   - 진행 상황을 보여주는 Progress Bar.
+   - 선택지와 텍스트 직접 입력 기능 제공.
+   - 이전 단계로 돌아가 수정 가능.
+   - 다크/라이트/시스템 모드 설정 (Next-theme 활용).
+
+---
+
+## 사용 기술
+
+- **프레임워크**: Next.js 13.4
+- **언어**: Typescript
+- **API**: Anthropic API
+- **이메일 발송**: Resend
+- **UI 라이브러리**: Shadcn UI
+
+---
+
+## 개발 기간
+
+- **2025.01.18 ~ 2025.01.19**
+
+---
+
+## 성과
+
+- 테스트 중
+
+---
+
+## 향후 개선 사항
+
+1. **사용자 행동 분석**
+
+   - 페이지 이탈 추적 기능 추가.
+   - 이탈 시 모달을 띄워 서베이 진행(이탈 이유 조사).
+
+2. **마케팅 도구 연동**
+
+   - 구글 애널리틱스, 믹스패널 등 연동.
+
+3. **프롬프트 개선**
+
+   - 다양한 프롬프트로 테스트 및 반복 개선.
+
+4. **데이터베이스 연동**
+   - 대화 내용을 기록하여 저장.
+
+---
+
+## 설치 및 실행 방법
+
+1. 이 저장소를 클론합니다.
+   ```bash
+   git clone <repository_url>
+   의존성을 설치합니다.
+   bash
+   Copy
+   Edit
+   npm install
+   개발 서버를 실행합니다.
+   bash
+   Copy
+   Edit
+   npm run dev
+   브라우저에서 http://localhost:3000으로 접속합니다.
+   ```
