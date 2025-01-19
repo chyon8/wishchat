@@ -93,23 +93,3 @@ bun dev
 
 4. **데이터베이스 연동**
    - 대화 내용을 기록하여 저장.
-
----
-
-## 설치 및 실행 방법
-
-1. 이 저장소를 클론합니다.
-   ```bash
-   git clone <repository_url>
-   의존성을 설치합니다.
-   bash
-   Copy
-   Edit
-   npm install
-   개발 서버를 실행합니다.
-   bash
-   Copy
-   Edit
-   npm run dev
-   브라우저에서 http://localhost:3000으로 접속합니다.
-   ```
