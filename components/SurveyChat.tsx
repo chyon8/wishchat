@@ -140,7 +140,7 @@ export default function SurveyChat() {
     setShowTextInput(false);
   };
 
-  const handleNext = async () => {
+  const handleNext = async (directInput?: string) => {
     if (state.isLoading) return;
 
     setState((prev) => ({
@@ -152,7 +152,7 @@ export default function SurveyChat() {
     try {
       let answer: string | string[];
       if (showTextInput || state.currentQuestion?.type === "text") {
-        answer = input;
+        answer = directInput || input;
       } else {
         answer = selectedOptions;
       }
@@ -658,7 +658,7 @@ export default function SurveyChat() {
             이전
           </Button>
           <Button
-            onClick={handleNext}
+            onClick={() => handleNext()}
             disabled={
               state.isLoading ||
               (!showTextInput &&
@@ -699,8 +699,9 @@ export default function SurveyChat() {
             type="button"
             variant="outline"
             onClick={(e) => {
-              setInput(e.currentTarget.textContent || "");
-              handleNext();
+              const text = e.currentTarget.textContent || "";
+              setInput(text);
+              handleNext(text);
             }}
           >
             AI 챗봇을 만들고 싶어요
@@ -709,8 +710,9 @@ export default function SurveyChat() {
             type="button"
             variant="outline"
             onClick={(e) => {
-              setInput(e.currentTarget.textContent || "");
-              handleNext();
+              const text = e.currentTarget.textContent || "";
+              setInput(text);
+              handleNext(text);
             }}
           >
             쇼핑몰을 만들고싶어요
@@ -719,8 +721,9 @@ export default function SurveyChat() {
             type="button"
             variant="outline"
             onClick={(e) => {
-              setInput(e.currentTarget.textContent || "");
-              handleNext();
+              const text = e.currentTarget.textContent || "";
+              setInput(text);
+              handleNext(text);
             }}
           >
             업무 자동화를 하고싶어요
