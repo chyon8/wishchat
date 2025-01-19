@@ -14,27 +14,6 @@ const Menu = () => {
           </Link>
         </Button>
       </nav>
-
-      {/*
-      <nav className="md:hidden">
-        <Sheet>
-          <SheetTrigger className="align-middle">
-            <EllipsisVertical />
-          </SheetTrigger>
-          <SheetContent className="flex flex-col items-start">
-            <SheetTitle>Menu</SheetTitle>
-            <ModeToggle />
-            <Button asChild variant="ghost">
-              <Link target="_blank" href="https://www.wishket.com/">
-                <Cat /> 위시켓으로
-              </Link>
-            </Button>
-
-            <SheetDescription></SheetDescription>
-          </SheetContent>
-        </Sheet>
-      </nav>
-*/}
     </div>
   );
 };
