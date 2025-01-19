@@ -34,6 +34,7 @@ export default function SurveyChat() {
     progress: 0,
     error: null,
     currentIndex: 0,
+    isRegistered: false,
   });
 
   const { toast } = useToast();
@@ -108,6 +109,7 @@ export default function SurveyChat() {
       progress: 0,
       error: null,
       currentIndex: 0,
+      isRegistered: false,
     });
     setInput("");
     setSelectedOptions([]);
@@ -352,6 +354,11 @@ export default function SurveyChat() {
         });
 
         setIsModalOpen(false);
+
+        setState((prev) => ({
+          ...prev,
+          isRegistered: true,
+        }));
         // handleReset();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
@@ -504,11 +511,16 @@ export default function SurveyChat() {
 
         <div className="flex gap-2 mt-6">
           <Button
+            disabled={state.isRegistered}
             variant="default"
             className="flex-1"
             onClick={() => setIsModalOpen(true)}
           >
-            프로젝트 등록하기
+            {state.isRegistered ? (
+              <span>등록 완료</span>
+            ) : (
+              <span>프로젝트 등록하기</span>
+            )}
           </Button>
           <Button variant="outline" className="flex-1" onClick={handleReset}>
             새로운 상담 시작

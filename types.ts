@@ -8,6 +8,7 @@ interface SurveyState {
   progress: number;
   error: string | null;
   currentIndex: number;
+  isRegistered: boolean;
 }
 
 interface QuestionResponse {
