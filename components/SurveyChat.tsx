@@ -63,6 +63,7 @@ export default function SurveyChat() {
       setRegistrationData((prev) => ({
         ...prev,
         projectData: {
+          answer: state.answers,
           overview: state.summary?.overview || "",
           requirements: state.summary?.requirements || [],
           environment: state.summary?.environment || "",
@@ -70,6 +71,7 @@ export default function SurveyChat() {
         },
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.summary]);
 
   useEffect(() => {
@@ -676,6 +678,30 @@ export default function SurveyChat() {
         <CardContent className="pt-6">
           <Progress value={state.progress} className="mb-6" />
           {renderContent()}
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-2xl mx-auto mt-8">
+        <CardContent className="pt-6">
+          {/* 원래 답변 */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">질문 및 답변 원본</h2>
+            <ul className="list-none pl-5">
+              {state.answers.map((item, index) => (
+                <li className="mb-3" key={index}>
+                  <p>
+                    <strong>질문 {index + 1}:</strong> {item.question}
+                  </p>
+                  <p>
+                    <strong>대답 {index + 1}:</strong>{" "}
+                    {Array.isArray(item.answer)
+                      ? item.answer.join(", ")
+                      : item.answer}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </CardContent>
       </Card>
 
