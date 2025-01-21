@@ -35,6 +35,7 @@ export default function SurveyChat() {
     error: null,
     currentIndex: 0,
     isRegistered: false,
+    estimation: null,
   });
 
   const { toast } = useToast();
@@ -112,10 +113,54 @@ export default function SurveyChat() {
       error: null,
       currentIndex: 0,
       isRegistered: false,
+      estimation: null,
     });
     setInput("");
     setSelectedOptions([]);
     setShowTextInput(false);
+  };
+
+  //견적 계산
+  const handleEstimate = async () => {
+    setState((prev) => ({
+      ...prev,
+      isLoading: true,
+    }));
+    // 필요한 데이터만 추출
+
+    const requestData = {
+      overview: registrationData.projectData.overview,
+      requirements: registrationData.projectData.requirements,
+      environment: registrationData.projectData.environment,
+      features: registrationData.projectData.features,
+    };
+
+    try {
+      const response = await fetch("/api/chat/estimation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ requestData }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setState((prev) => ({
+        ...prev,
+        estimation: data.estimation,
+        isLoading: false,
+      }));
+    } catch (error) {
+      console.error("Error:", error);
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+    }
   };
 
   const handleNext = async (directInput?: string) => {
@@ -529,6 +574,21 @@ export default function SurveyChat() {
           </Button>
         </div>
 
+        <Button
+          className="flex-1"
+          onClick={handleEstimate}
+          disabled={state.isLoading}
+        >
+          {state.isLoading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>계산 중...</span>
+            </div>
+          ) : (
+            "견적 계산하기"
+          )}
+        </Button>
+
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent>
             <DialogHeader>
@@ -680,6 +740,17 @@ export default function SurveyChat() {
           {renderContent()}
         </CardContent>
       </Card>
+
+      {state.stage !== "initial" && state.estimation !== null && (
+        <Card className="w-full max-w-2xl mx-auto mt-8">
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold">예상 견적</h2>
+              <p className="whitespace-pre-line">{state.estimation}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {state.stage !== "initial" && (
         <Card className="w-full max-w-2xl mx-auto mt-8">

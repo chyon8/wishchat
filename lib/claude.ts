@@ -3,7 +3,11 @@ import {
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
-import { QUESTION_SYSTEM_PROMPT, SUMMARY_SYSTEM_PROMPT } from "./prompts";
+import {
+  //ESTIMATE_SYSTEM_PROMPT,
+  QUESTION_SYSTEM_PROMPT,
+  SUMMARY_SYSTEM_PROMPT,
+} from "./prompts";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
@@ -96,3 +100,30 @@ export async function getSummary(answers: Answer[]) {
     return response as ResponseWithContent;
   }, validateSummaryResponse);
 }
+
+// 견적 계산
+
+/*
+export async function getEstimation(answers: Answer[]) {
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-3-sonnet-20240229",
+      max_tokens: 2048,
+      temperature: 0.7,
+      system: ESTIMATE_SYSTEM_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+            기간과 견적을 계산해주세요.`,
+        },
+      ],
+    });
+
+    return response.content[0].text || "결과를 생성할 수 없습니다.";
+  } catch (error) {
+    console.error("Error fetching estimation:", error);
+    return "에러가 발생했습니다. 다시 시도해주세요.";
+  }
+}
+*/

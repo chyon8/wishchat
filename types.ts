@@ -9,6 +9,7 @@ interface SurveyState {
   error: string | null;
   currentIndex: number;
   isRegistered: boolean;
+  estimation: string | null;
 }
 
 interface QuestionResponse {
