@@ -513,7 +513,7 @@ export default function SurveyChat() {
 
         <div className="flex gap-2 mt-6">
           <Button
-            disabled={state.isRegistered}
+            //disabled={state.isRegistered}
             variant="default"
             className="flex-1"
             onClick={() => setIsModalOpen(true)}
@@ -681,29 +681,31 @@ export default function SurveyChat() {
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-2xl mx-auto mt-8">
-        <CardContent className="pt-6">
-          {/* 원래 답변 */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">질문 및 답변 원본</h2>
-            <ul className="list-none pl-5">
-              {state.answers.map((item, index) => (
-                <li className="mb-3" key={index}>
-                  <p>
-                    <strong>질문 {index + 1}:</strong> {item.question}
-                  </p>
-                  <p>
-                    <strong>대답 {index + 1}:</strong>{" "}
-                    {Array.isArray(item.answer)
-                      ? item.answer.join(", ")
-                      : item.answer}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+      {state.stage !== "initial" && (
+        <Card className="w-full max-w-2xl mx-auto mt-8">
+          <CardContent className="pt-6">
+            {/* 원래 답변 */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold">질문 및 답변 원본</h2>
+              <ul className="list-none pl-5">
+                {state.answers.map((item, index) => (
+                  <li className="mb-3" key={index}>
+                    <p>
+                      <strong>질문 {index + 1}:</strong> {item.question}
+                    </p>
+                    <p>
+                      <strong>대답 {index + 1}:</strong>{" "}
+                      {Array.isArray(item.answer)
+                        ? item.answer.join(", ")
+                        : item.answer}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {state.stage == "initial" && (
         <div className="w-full max-w-2xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
