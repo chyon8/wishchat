@@ -10,6 +10,7 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import EstimationDisplay from "./estimationDisplay";
 
 import {
   Dialog,
@@ -558,7 +559,7 @@ export default function SurveyChat() {
 
         <div className="flex gap-2 mt-6">
           <Button
-            //disabled={state.isRegistered}
+            disabled={state.isRegistered}
             variant="default"
             className="flex-1"
             onClick={() => setIsModalOpen(true)}
@@ -732,6 +733,11 @@ export default function SurveyChat() {
     );
   };
 
+  const parsedEstimation =
+    typeof state.estimation === "string"
+      ? JSON.parse(state.estimation)
+      : state.estimation;
+
   return (
     <>
       <Card className="w-full max-w-2xl mx-auto">
@@ -742,14 +748,7 @@ export default function SurveyChat() {
       </Card>
 
       {state.stage !== "initial" && state.estimation !== null && (
-        <Card className="w-full max-w-2xl mx-auto mt-8">
-          <CardContent className="pt-6">
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold">예상 견적</h2>
-              <p className="whitespace-pre-line">{state.estimation}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <EstimationDisplay estimation={parsedEstimation} />
       )}
 
       {state.stage !== "initial" && (

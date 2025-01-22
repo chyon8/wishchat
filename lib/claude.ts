@@ -66,7 +66,7 @@ async function retryOperation<T extends ResponseWithContent>(
 export async function getNextQuestion(answers: Answer[]) {
   return retryOperation(async () => {
     const response = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 1024,
       temperature: 0.7,
       system: QUESTION_SYSTEM_PROMPT,
@@ -85,7 +85,7 @@ export async function getNextQuestion(answers: Answer[]) {
 export async function getSummary(answers: Answer[]) {
   return retryOperation(async () => {
     const response = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 2048,
       temperature: 0.7,
       system: SUMMARY_SYSTEM_PROMPT,
@@ -102,12 +102,11 @@ export async function getSummary(answers: Answer[]) {
 }
 
 // 견적 계산
-
 /*
 export async function getEstimation(answers: Answer[]) {
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 2048,
       temperature: 0.7,
       system: ESTIMATE_SYSTEM_PROMPT,

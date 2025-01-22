@@ -7,7 +7,7 @@ export function validateQuestionResponse(
   if (!["text", "multiple-choice"].includes(response.type)) return false;
   if (response.type === "multiple-choice") {
     if (!Array.isArray(response.options)) return false;
-    if (response.options.length !== 5) return false;
+    if (response.options.length !== 6) return false;
     if (!response.options.includes("잘 모르겠어요")) return false;
   }
 

@@ -1,4 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface ManMonth {
+  frontend: number;
+  backend: number;
+  designer: number;
+  planner: number;
+  pm: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SurveyState {
   stage: "initial" | "questioning" | "summary";
   currentQuestion: QuestionResponse | null;
@@ -9,7 +18,7 @@ interface SurveyState {
   error: string | null;
   currentIndex: number;
   isRegistered: boolean;
-  estimation: string | null;
+  estimation: ManMonth | null;
 }
 
 interface QuestionResponse {
