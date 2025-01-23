@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import {
+  validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
@@ -20,6 +21,11 @@ interface ResponseWithContent {
   requirements?: string[];
   environment?: string;
   features?: string[];
+  frontend?: number;
+  backend?: number;
+  designer?: number;
+  planner?: number;
+  pm?: number;
 }
 
 // Interface for raw OpenAI API response
@@ -129,6 +135,8 @@ export async function getSummary(answers: Answer[]) {
 
 // 견적 계산
 
+/*
+
 export async function getEstimation(answers: Answer[]) {
   try {
     const response = await openai.chat.completions.create({
@@ -155,4 +163,27 @@ export async function getEstimation(answers: Answer[]) {
     console.error("Error fetching estimation:", error);
     return "에러가 발생했습니다. 다시 시도해주세요.";
   }
+}
+*/
+
+export async function getEstimation(answers: Answer[]) {
+  return retryOperation<ResponseWithContent>(async () => {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.7,
+      max_tokens: 2048,
+      messages: [
+        {
+          role: "system",
+          content: ESTIMATE_SYSTEM_PROMPT,
+        },
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+             기간과 견적을 산정해주세요.`,
+        },
+      ],
+    });
+    return response as unknown as OpenAIResponse;
+  }, validateEstimationResponse);
 }

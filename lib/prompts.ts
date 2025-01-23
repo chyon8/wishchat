@@ -59,13 +59,13 @@ export const ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로젝트
 
 응답 형식:
 {
-  "manmonth": {
-    "frontend": manmonth,
-    "backend": manmonth,
-    "designer": manmonth,
-    "planner": manmonth,
-    "pm": manmonth,
-  },
+  "frontend": manmonth,
+   "backend": manmonth,
+   "designer": manmonth,
+   "planner": manmonth,
+   "pm": manmonth,
+}
+
 
 `;
 

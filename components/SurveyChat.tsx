@@ -733,11 +733,6 @@ export default function SurveyChat() {
     );
   };
 
-  const parsedEstimation =
-    typeof state.estimation === "string"
-      ? JSON.parse(state.estimation)
-      : state.estimation;
-
   return (
     <>
       <Card className="w-full max-w-2xl mx-auto">
@@ -748,7 +743,7 @@ export default function SurveyChat() {
       </Card>
 
       {state.stage !== "initial" && state.estimation !== null && (
-        <EstimationDisplay estimation={parsedEstimation} />
+        <EstimationDisplay estimation={state.estimation} />
       )}
 
       {state.stage !== "initial" && (

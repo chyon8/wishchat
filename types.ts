@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ManMonth {
   frontend: number;
@@ -47,6 +48,14 @@ interface SummaryResponse {
  
   }>;
 }   */
+
+interface EstimationResponse {
+  frontend: number;
+  backend: number;
+  designer: number;
+  planner: number;
+  pm: number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface RegistrationData {

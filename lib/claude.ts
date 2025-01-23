@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
+  validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
@@ -20,6 +21,11 @@ interface ResponseWithContent {
   requirements?: string[];
   environment?: string;
   features?: string[];
+  frontend?: number;
+  backend?: number;
+  designer?: number;
+  planner?: number;
+  pm?: number;
 }
 
 const anthropic = new Anthropic({
@@ -126,3 +132,22 @@ export async function getEstimation(answers: Answer[]) {
   }
 }
 */
+
+export async function getEstimation(answers: Answer[]) {
+  return retryOperation(async () => {
+    const response = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20241022",
+      max_tokens: 2048,
+      temperature: 0.7,
+      system: SUMMARY_SYSTEM_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+            최종 결과를 정리해주세요.`,
+        },
+      ],
+    });
+    return response as ResponseWithContent;
+  }, validateEstimationResponse);
+}

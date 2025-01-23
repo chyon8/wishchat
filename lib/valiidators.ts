@@ -34,3 +34,17 @@ export function validateSummaryResponse(
   );
 }
 */
+
+export function validateEstimationResponse(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  response: any
+): response is EstimationResponse {
+  if (!response || typeof response !== "object") return false;
+  if (typeof response.frontend !== "number") return false;
+  if (typeof response.backend !== "number") return false;
+  if (typeof response.pm !== "number") return false;
+  if (typeof response.planner !== "number") return false;
+  if (typeof response.designer !== "number") return false;
+
+  return true;
+}
