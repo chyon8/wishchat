@@ -47,7 +47,12 @@ export default function SurveyChat() {
   const [activeTab, setActiveTab] = useState("preview");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const TOTAL_QUESTIONS = 5;
+  //const TOTAL_QUESTIONS = 5;
+  const AI_QUESTIONS = 5;
+  const HUMAN_QUESTIONS = 2;
+  const totalAIQuestions = AI_QUESTIONS; // AI 질문 개수
+  const totalHumanQuestions = HUMAN_QUESTIONS; // HUMAN 질문 개수
+  const totalQuestions = totalAIQuestions + totalHumanQuestions; // 총 질문 개수
 
   const [registrationData, setRegistrationData] = useState<RegistrationData>({
     email: "",
@@ -57,6 +62,8 @@ export default function SurveyChat() {
       requirements: [],
       environment: "",
       features: [],
+      workRange: [],
+      additional: "",
     },
   });
 
@@ -70,6 +77,8 @@ export default function SurveyChat() {
           requirements: state.summary?.requirements || [],
           environment: state.summary?.environment || "",
           features: state.summary?.features || [],
+          workRange: state.summary?.workRange || [],
+          additional: state.summary?.additional || "",
         },
       }));
     }
@@ -195,6 +204,146 @@ export default function SurveyChat() {
         newAnswers.push(currentAnswer);
       }
 
+      const humanQuestions: QuestionResponse[] = [
+        {
+          text: "필요하신 업무 범위를 말해주세요",
+          type: "multiple-choice",
+          options: ["기획", "디자인", "개발", "모르겠어요"],
+        },
+        {
+          text: "추가적인 정보가 있다면 알려주세요",
+          type: "text",
+          options: [],
+        },
+      ];
+
+      if (newAnswers.length >= totalQuestions) {
+        // 서머리로 상태 변경 먼저
+        setState((prev) => ({
+          ...prev,
+          stage: "summary",
+          isLoading: true,
+          progress: 100,
+        }));
+
+        const response = await fetch("/api/chat/summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: newAnswers }),
+        });
+
+        if (!response.ok) throw new Error("Failed to get summary");
+
+        const data = await response.json();
+
+        setState((prev) => ({
+          ...prev,
+          summary: data.summary,
+          answers: newAnswers,
+          isLoading: false,
+        }));
+
+        setRegistrationData((prev) => ({
+          ...prev,
+          projectData: {
+            overview: data.summary.overview || "",
+            requirements: data.summary.requirements || [],
+            environment: data.summary.environment || "",
+            features: data.summary.features || [],
+            workRange: data.summary.workRange || [],
+            additional: data.summary.additional || "",
+          },
+        }));
+      } else {
+        // AI 질문 개수만큼 질문을 완료한 후 HUMAN 질문 진행
+        if (newAnswers.length < totalAIQuestions) {
+          const response = await fetch("/api/chat/question", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answers: newAnswers }),
+          });
+
+          if (!response.ok) throw new Error("Failed to get question");
+
+          const data = await response.json();
+          const nextIndex = state.currentIndex + 1;
+
+          setState((prev) => ({
+            ...prev,
+            stage: "questioning",
+            currentQuestion: data.question,
+            answers: newAnswers,
+            isLoading: false,
+            currentIndex: nextIndex,
+            progress: Math.min((nextIndex / totalQuestions) * 100, 100),
+          }));
+
+          setSelectedOptions([]);
+          setInput("");
+          setShowTextInput(false);
+        } else {
+          // HUMAN 질문 렌더링
+          const nextIndex = state.currentIndex + 1;
+
+          setState((prev) => ({
+            ...prev,
+            stage: "questioning",
+            currentQuestion: humanQuestions[nextIndex - totalAIQuestions], // HUMAN 질문은 지정된 질문 목록에서 가져옴
+            answers: newAnswers,
+            isLoading: false,
+            currentIndex: nextIndex,
+            progress: Math.min((nextIndex / totalQuestions) * 100, 100),
+          }));
+
+          setSelectedOptions([]);
+          setInput("");
+          setShowTextInput(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: "오류가 발생했습니다. 다시 시도해주세요.",
+      }));
+    }
+  };
+
+  /*
+  //handle next
+  const handleNext = async (directInput?: string) => {
+    if (state.isLoading) return;
+
+    setState((prev) => ({
+      ...prev,
+      isLoading: true,
+      error: null,
+    }));
+
+    try {
+      let answer: string | string[];
+      if (showTextInput || state.currentQuestion?.type === "text") {
+        answer = directInput || input;
+      } else {
+        answer = selectedOptions;
+      }
+
+      const newAnswers = [...state.answers];
+      const currentAnswer = {
+        question: state.currentQuestion?.text || "",
+        answer,
+        type: state.currentQuestion?.type || "text",
+        questionData: state.currentQuestion!, // 현재 질문 데이터 저장
+      };
+
+      if (newAnswers[state.currentIndex]) {
+        newAnswers[state.currentIndex] = currentAnswer;
+      } else {
+        newAnswers.push(currentAnswer);
+      }
+
       if (newAnswers.length >= TOTAL_QUESTIONS) {
         //서머리로 상태 변경 먼저
         setState((prev) => ({
@@ -266,6 +415,9 @@ export default function SurveyChat() {
       }));
     }
   };
+
+  */
+  // handlenext
 
   const handlePrevious = () => {
     if (state.currentIndex > 0) {
@@ -469,6 +621,18 @@ export default function SurveyChat() {
                   <li key={i}>{feature}</li>
                 ))}
               </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold">업무 범위</h3>
+              <ul className="list-disc pl-5">
+                {registrationData.projectData.workRange.map((req, i) => (
+                  <li key={i}>{req}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold">추가 정보</h3>
+              <p>{registrationData.projectData.additional}</p>
             </div>
           </>
         ) : (
@@ -719,7 +883,7 @@ export default function SurveyChat() {
           >
             {state.isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
-            ) : state.answers.length >= 6 ? (
+            ) : state.answers.length >= totalQuestions - 1 ? (
               "완료"
             ) : (
               "다음"
@@ -743,7 +907,10 @@ export default function SurveyChat() {
       </Card>
 
       {state.stage !== "initial" && state.estimation !== null && (
-        <EstimationDisplay estimation={state.estimation} />
+        <EstimationDisplay
+          estimation={state.estimation}
+          workRange={registrationData.projectData.workRange}
+        />
       )}
 
       {state.stage !== "initial" && (

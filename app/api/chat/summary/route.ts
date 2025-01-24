@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const { answers } = await req.json();
     const summary = await getSummary(answers);
+
     return NextResponse.json({ summary });
   } catch (error) {
     console.error("Error generating summary:", error);

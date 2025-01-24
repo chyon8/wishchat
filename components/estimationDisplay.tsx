@@ -2,10 +2,10 @@ import { calculateEstimation } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function EstimationDisplay({ estimation }: any) {
+export default function EstimationDisplay({ estimation, workRange }: any) {
   if (!estimation) return null;
 
-  const result = calculateEstimation(estimation);
+  const result = calculateEstimation(estimation, workRange);
 
   return (
     <Card className="w-full max-w-2xl mx-auto mt-8">
@@ -23,18 +23,7 @@ export default function EstimationDisplay({ estimation }: any) {
                 <li>PM: {result.manmonth.pm}MM</li>
               </ul>
             </div>
-            {/*
-            <div className="space-y-1">
-              <p className="font-medium">비용 산정:</p>
-              <ul className="pl-4">
-                <li>프론트엔드: {result.costs.frontend.toLocaleString()}원</li>
-                <li>백엔드: {result.costs.backend.toLocaleString()}원</li>
-                <li>디자이너: {result.costs.designer.toLocaleString()}원</li>
-                <li>기획자: {result.costs.planner.toLocaleString()}원</li>
-                <li>PM: {result.costs.pm.toLocaleString()}원</li>
-              </ul>
-            </div>
-          */}
+
             <div className="space-y-1">
               <p className="font-bold mt-4">총 예상 비용:</p>
               <ul className="pl-4">

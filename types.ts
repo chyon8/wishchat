@@ -41,6 +41,8 @@ interface SummaryResponse {
   requirements: string[];
   environment: string;
   features: string[];
+  workRange: string[];
+  additional: string;
 }
 /*
   features: Array<{
@@ -69,5 +71,7 @@ interface RegistrationData {
     environment: string;
     // features: Array<{ name: string; description: string }>;
     features: string[];
+    workRange: string[];
+    additional: string;
   };
 }
