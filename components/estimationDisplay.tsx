@@ -47,6 +47,10 @@ export default function EstimationDisplay({ estimation }: any) {
                   </li>
                 ))}
               </ul>
+              <div className="space-y-1">
+                <p className="font-bold mt-4">근거 설명:</p>{" "}
+                <p className="pl-4">{estimation.reason}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -45,6 +45,7 @@ export function validateEstimationResponse(
   if (typeof response.pm !== "number") return false;
   if (typeof response.planner !== "number") return false;
   if (typeof response.designer !== "number") return false;
+  if (typeof response.reason !== "string") return false;
 
   return true;
 }

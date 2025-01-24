@@ -6,6 +6,7 @@ interface ManMonth {
   designer: number;
   planner: number;
   pm: number;
+  reason: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -55,6 +56,7 @@ interface EstimationResponse {
   designer: number;
   planner: number;
   pm: number;
+  reason: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

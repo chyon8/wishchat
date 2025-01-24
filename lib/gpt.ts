@@ -26,6 +26,7 @@ interface ResponseWithContent {
   designer?: number;
   planner?: number;
   pm?: number;
+  reason?: string;
 }
 
 // Interface for raw OpenAI API response
