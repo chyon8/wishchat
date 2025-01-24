@@ -24,10 +24,13 @@ export const QUESTION_SYSTEM_PROMPT = `당신은 IT 프로젝트 컨설턴트입
 
 오직 첫 질문만 다음과 같이 반환됩니다:
 {
-  "text": "어떤 서비스를 만들고 싶으세요?",
+
+  "text": "진행하실 프로젝트 내용을 간략히 설명해주세요.",
   "type": "text",
   "options": []
 }`;
+
+//어떤 서비스를 만들고 싶으세요?
 
 export const SUMMARY_SYSTEM_PROMPT = `지금까지의 답변을 바탕으로 최종 결과를 정리해주세요.
 
