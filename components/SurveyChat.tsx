@@ -878,7 +878,8 @@ export default function SurveyChat() {
                 state.currentQuestion?.type === "multiple-choice" &&
                 selectedOptions.length === 0) ||
               ((showTextInput || state.currentQuestion?.type === "text") &&
-                !input.trim())
+                !input.trim() &&
+                state.answers.length < totalQuestions - 1)
             }
           >
             {state.isLoading ? (
