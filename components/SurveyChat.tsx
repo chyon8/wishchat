@@ -488,7 +488,13 @@ export default function SurveyChat() {
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="답변을 입력하세요..."
+          //추가추가
+
+          placeholder={
+            state.answers.length < totalQuestions - 1
+              ? "답변을 입력하세요..."
+              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
+          }
           disabled={state.isLoading}
         />
         {state.currentQuestion?.type === "multiple-choice" && (

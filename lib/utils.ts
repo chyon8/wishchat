@@ -23,7 +23,7 @@ export const calculateEstimation = (
     backend: workRange.includes("개발") ? estimation.backend : 0,
     designer: workRange.includes("디자인") ? estimation.designer : 0,
     planner: workRange.includes("기획") ? estimation.planner : 0,
-    pm: workRange.includes("PM") ? estimation.pm : 0,
+    pm: estimation.pm,
   };
 
   const costs = {
