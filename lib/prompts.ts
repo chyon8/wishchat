@@ -25,7 +25,7 @@ export const QUESTION_SYSTEM_PROMPT = `당신은 IT 프로젝트 컨설턴트입
 오직 첫 질문만 다음과 같이 반환됩니다:
 {
 
-  "text": "진행하실 프로젝트 내용을 간략히 설명해주세요.",
+  "text": "진행하실 프로젝트 내용을 설명해주세요.",
   "type": "text",
   "options": []
 }`;

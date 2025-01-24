@@ -25,7 +25,7 @@ export default function SurveyChat() {
   const [state, setState] = useState<SurveyState>({
     stage: "initial",
     currentQuestion: {
-      text: "진행하실 프로젝트 내용을 간략히 설명해주세요",
+      text: "진행하실 프로젝트 내용을 설명해주세요",
       type: "text",
       options: [],
     },
@@ -112,7 +112,7 @@ export default function SurveyChat() {
     setState({
       stage: "initial",
       currentQuestion: {
-        text: "진행하실 프로젝트 내용을 간략히 설명해주세요",
+        text: "진행하실 프로젝트 내용을 설명해주세요",
         type: "text",
         options: [],
       },
