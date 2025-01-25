@@ -20,6 +20,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import ComplexityDisplay from "./ComplexityDisplay";
 
 export default function SurveyChat() {
   const [state, setState] = useState<SurveyState>({
@@ -37,6 +38,7 @@ export default function SurveyChat() {
     currentIndex: 0,
     isRegistered: false,
     estimation: null,
+    complexity: null,
   });
 
   const { toast } = useToast();
@@ -124,6 +126,7 @@ export default function SurveyChat() {
       currentIndex: 0,
       isRegistered: false,
       estimation: null,
+      complexity: null,
     });
     setInput("");
     setSelectedOptions([]);
@@ -162,6 +165,7 @@ export default function SurveyChat() {
       setState((prev) => ({
         ...prev,
         estimation: data.estimation,
+        complexity: data.complexity,
         isLoading: false,
       }));
     } catch (error) {
@@ -310,114 +314,6 @@ export default function SurveyChat() {
       }));
     }
   };
-
-  /*
-  //handle next
-  const handleNext = async (directInput?: string) => {
-    if (state.isLoading) return;
-
-    setState((prev) => ({
-      ...prev,
-      isLoading: true,
-      error: null,
-    }));
-
-    try {
-      let answer: string | string[];
-      if (showTextInput || state.currentQuestion?.type === "text") {
-        answer = directInput || input;
-      } else {
-        answer = selectedOptions;
-      }
-
-      const newAnswers = [...state.answers];
-      const currentAnswer = {
-        question: state.currentQuestion?.text || "",
-        answer,
-        type: state.currentQuestion?.type || "text",
-        questionData: state.currentQuestion!, // 현재 질문 데이터 저장
-      };
-
-      if (newAnswers[state.currentIndex]) {
-        newAnswers[state.currentIndex] = currentAnswer;
-      } else {
-        newAnswers.push(currentAnswer);
-      }
-
-      if (newAnswers.length >= TOTAL_QUESTIONS) {
-        //서머리로 상태 변경 먼저
-        setState((prev) => ({
-          ...prev,
-          stage: "summary",
-          isLoading: true,
-          progress: 100,
-        }));
-
-        const response = await fetch("/api/chat/summary", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: newAnswers }),
-        });
-
-        if (!response.ok) throw new Error("Failed to get summary");
-
-        const data = await response.json();
-
-        setState((prev) => ({
-          ...prev,
-          summary: data.summary,
-          answers: newAnswers,
-          isLoading: false,
-        }));
-
-        setRegistrationData((prev) => ({
-          ...prev,
-          projectData: {
-            overview: data.summary.overview || "",
-            requirements: data.summary.requirements || [],
-            environment: data.summary.environment || "",
-            features: data.summary.features || [],
-          },
-        }));
-      } else {
-        const response = await fetch("/api/chat/question", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: newAnswers }),
-        });
-
-        if (!response.ok) throw new Error("Failed to get question");
-
-        const data = await response.json();
-        const nextIndex = state.currentIndex + 1;
-
-        setState((prev) => ({
-          ...prev,
-          stage: "questioning",
-          currentQuestion: data.question,
-          answers: newAnswers,
-          isLoading: false,
-          currentIndex: nextIndex,
-          progress: Math.min((nextIndex / TOTAL_QUESTIONS) * 100, 100),
-        }));
-
-        setSelectedOptions([]);
-        setInput("");
-        setShowTextInput(false);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: "오류가 발생했습니다. 다시 시도해주세요.",
-      }));
-    }
-  };
-
-  */
-  // handlenext
 
   const handlePrevious = () => {
     if (state.currentIndex > 0) {
@@ -912,6 +808,10 @@ export default function SurveyChat() {
           {renderContent()}
         </CardContent>
       </Card>
+
+      {state.stage !== "initial" && state.complexity !== null && (
+        <ComplexityDisplay complexity={state.complexity} />
+      )}
 
       {state.stage !== "initial" && state.estimation !== null && (
         <EstimationDisplay

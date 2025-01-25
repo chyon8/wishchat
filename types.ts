@@ -21,6 +21,7 @@ interface SurveyState {
   currentIndex: number;
   isRegistered: boolean;
   estimation: ManMonth | null;
+  complexity: ComplexityResponse | null;
 }
 
 interface QuestionResponse {
@@ -74,4 +75,9 @@ interface RegistrationData {
     workRange: string[];
     additional: string;
   };
+}
+
+interface ComplexityResponse {
+  complexity: string;
+  reasonComplexity: string;
 }

@@ -1,13 +1,14 @@
 import OpenAI from "openai";
 import {
+  validateComplexityResponse,
   validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
 import {
-  ESTIMATE_SYSTEM_PROMPT,
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
+  COMPLEXITY_SYSTEM_PROMPT,
 } from "./prompts";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,8 @@ interface ResponseWithContent {
   planner?: number;
   pm?: number;
   reason?: string;
+  complexity?: string;
+  reasonComplexity?: string;
 }
 
 // Interface for raw OpenAI API response
@@ -167,7 +170,7 @@ export async function getEstimation(answers: Answer[]) {
 }
 */
 
-export async function getEstimation(answers: Answer[]) {
+export async function getEstimation(answers: Answer[], systemPrompt: string) {
   return retryOperation<ResponseWithContent>(async () => {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -176,7 +179,7 @@ export async function getEstimation(answers: Answer[]) {
       messages: [
         {
           role: "system",
-          content: ESTIMATE_SYSTEM_PROMPT,
+          content: systemPrompt,
         },
         {
           role: "user",
@@ -187,4 +190,26 @@ export async function getEstimation(answers: Answer[]) {
     });
     return response as unknown as OpenAIResponse;
   }, validateEstimationResponse);
+}
+
+export async function getComplexity(answers: Answer[]) {
+  return retryOperation<ResponseWithContent>(async () => {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.7,
+      max_tokens: 2048,
+      messages: [
+        {
+          role: "system",
+          content: COMPLEXITY_SYSTEM_PROMPT,
+        },
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+             프로젝트의 복잡도를 평가해주세요.`,
+        },
+      ],
+    });
+    return response as unknown as OpenAIResponse;
+  }, validateComplexityResponse);
 }

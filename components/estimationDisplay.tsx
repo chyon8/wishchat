@@ -2,7 +2,11 @@ import { calculateEstimation } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function EstimationDisplay({ estimation, workRange }: any) {
+export default function EstimationDisplay({
+  estimation,
+  workRange,
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+any) {
   if (!estimation) return null;
 
   const result = calculateEstimation(estimation, workRange);

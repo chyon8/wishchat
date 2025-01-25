@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEstimation } from "@/lib/gpt";
+import { getComplexity } from "@/lib/gpt";
 //import { getEstimation } from "@/lib/claude";
+import {
+  MID_ESTIMATE_SYSTEM_PROMPT,
+  EASY_ESTIMATE_SYSTEM_PROMPT,
+} from "@/lib/prompts";
 
 export async function POST(req: NextRequest) {
   try {
     const { requestData } = await req.json();
-    const estimation = await getEstimation(requestData);
-    return NextResponse.json({ estimation });
+    const complexity = await getComplexity(requestData);
+
+    const systemPrompt =
+      complexity.complexity === "easy"
+        ? EASY_ESTIMATE_SYSTEM_PROMPT
+        : MID_ESTIMATE_SYSTEM_PROMPT;
+
+    const estimation = await getEstimation(requestData, systemPrompt);
+
+    return NextResponse.json({ estimation, complexity });
   } catch (error) {
     console.error("Error generating estimation:", error);
     return NextResponse.json(

@@ -14,6 +14,7 @@ export function validateQuestionResponse(
   return true;
 }
 
+const validWorkRangeValues = ["기획", "디자인", "개발"];
 export function validateSummaryResponse(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   response: any
@@ -23,6 +24,13 @@ export function validateSummaryResponse(
   if (!Array.isArray(response.requirements)) return false;
   if (typeof response.environment !== "string") return false;
   if (!Array.isArray(response.features)) return false;
+
+  // workRange 검증
+  if (!Array.isArray(response.workRange)) return false;
+  if (response.workRange.length === 0) return false; // workRange가 비어있으면 false
+  for (const value of response.workRange) {
+    if (!validWorkRangeValues.includes(value)) return false; // 유효하지 않은 값이 포함되어 있으면 false
+  }
 
   return true;
 }
@@ -46,6 +54,24 @@ export function validateEstimationResponse(
   if (typeof response.planner !== "number") return false;
   if (typeof response.designer !== "number") return false;
   if (typeof response.reason !== "string") return false;
+
+  return true;
+}
+
+const validComplexityValues = ["mid", "easy"];
+
+export function validateComplexityResponse(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  response: any
+): response is ComplexityResponse {
+  if (!response || typeof response !== "object") return false;
+  if (
+    typeof response.complexity !== "string" ||
+    !validComplexityValues.includes(response.complexity)
+  ) {
+    return false;
+  }
+  if (typeof response.reasonComplexity !== "string") return false;
 
   return true;
 }
