@@ -47,13 +47,6 @@ interface SummaryResponse {
   workRange: string[];
   additional: string;
 }
-/*
-  features: Array<{
-    name: string;
-    description: string;
- 
-  }>;
-}   */
 
 interface EstimationResponse {
   frontend: number;

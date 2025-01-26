@@ -49,7 +49,6 @@ export default function SurveyChat() {
   const [activeTab, setActiveTab] = useState("preview");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  //const TOTAL_QUESTIONS = 5;
   const AI_QUESTIONS = 5;
   const HUMAN_QUESTIONS = 2;
   const totalAIQuestions = AI_QUESTIONS; // AI 질문 개수
@@ -189,18 +188,7 @@ export default function SurveyChat() {
     }));
 
     try {
-      /*
-      let answer: string | string[];
-      if (showTextInput || state.currentQuestion?.type === "text") {
-        answer = directInput || input;
-      } else {
-        answer = selectedOptions;
-      }
-        */
-
       const directTextInput = directInput || input;
-
-      //const answer = [directTextInput, ...selectedOptions];
 
       const currentAnswer = {
         question: state.currentQuestion?.text || "",
@@ -212,13 +200,6 @@ export default function SurveyChat() {
 
       const newAnswers = [...state.answers];
       newAnswers[state.currentIndex] = currentAnswer;
-      /*
-      if (newAnswers[state.currentIndex]) {
-        newAnswers[state.currentIndex] = currentAnswer;
-      } else {
-        newAnswers.push(currentAnswer);
-      }
-        */
 
       const humanQuestions: QuestionResponse[] = [
         {
@@ -820,24 +801,6 @@ export default function SurveyChat() {
                   selectedOptions.length > 0
                 ))
             }
-
-            /*
-            disabled={
-              state.isLoading ||
-              (!showTextInput &&
-                state.currentQuestion?.type === "multiple-choice" &&
-                selectedOptions.length === 0) ||
-              ((showTextInput || state.currentQuestion?.type === "text") &&
-                !input.trim() &&
-                state.answers.length < totalQuestions - 1)
-            }
-              */
-
-            /*
-            disabled={
-              state.isLoading || // 로딩 중이면 비활성화
-              !(input.trim() || selectedOptions.length > 0) 
-            } */
           >
             {state.isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
