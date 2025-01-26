@@ -32,7 +32,9 @@ interface QuestionResponse {
 
 interface Answer {
   question: string;
-  answer: string | string[];
+  //answer: string | string[];
+  directTextInput: string;
+  selectedOptions: string[];
   type: "text" | "multiple-choice";
   questionData: QuestionResponse; // 질문 데이터 전체를 저장
 }

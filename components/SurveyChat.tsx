@@ -55,6 +55,7 @@ export default function SurveyChat() {
   const totalAIQuestions = AI_QUESTIONS; // AI 질문 개수
   const totalHumanQuestions = HUMAN_QUESTIONS; // HUMAN 질문 개수
   const totalQuestions = totalAIQuestions + totalHumanQuestions; // 총 질문 개수
+  const isLastQuestion = state.answers.length === totalQuestions - 1;
 
   const [registrationData, setRegistrationData] = useState<RegistrationData>({
     email: "",
@@ -177,6 +178,7 @@ export default function SurveyChat() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleNext = async (directInput?: string) => {
     if (state.isLoading) return;
 
@@ -187,26 +189,36 @@ export default function SurveyChat() {
     }));
 
     try {
+      /*
       let answer: string | string[];
       if (showTextInput || state.currentQuestion?.type === "text") {
         answer = directInput || input;
       } else {
         answer = selectedOptions;
       }
+        */
 
-      const newAnswers = [...state.answers];
+      const directTextInput = directInput || input;
+
+      //const answer = [directTextInput, ...selectedOptions];
+
       const currentAnswer = {
         question: state.currentQuestion?.text || "",
-        answer,
+        directTextInput,
+        selectedOptions,
         type: state.currentQuestion?.type || "text",
         questionData: state.currentQuestion!, // 현재 질문 데이터 저장
       };
 
+      const newAnswers = [...state.answers];
+      newAnswers[state.currentIndex] = currentAnswer;
+      /*
       if (newAnswers[state.currentIndex]) {
         newAnswers[state.currentIndex] = currentAnswer;
       } else {
         newAnswers.push(currentAnswer);
       }
+        */
 
       const humanQuestions: QuestionResponse[] = [
         {
@@ -316,7 +328,7 @@ export default function SurveyChat() {
   };
 
   const handlePrevious = () => {
-    if (state.currentIndex > 0) {
+    if (state.currentIndex > 1) {
       const previousIndex = state.currentIndex - 1;
       const previousAnswer = state.answers[previousIndex];
 
@@ -331,12 +343,17 @@ export default function SurveyChat() {
       // 이전 답변 상태 복원
       if (previousAnswer.type === "multiple-choice") {
         setSelectedOptions(
-          Array.isArray(previousAnswer.answer) ? previousAnswer.answer : []
+          Array.isArray(previousAnswer.selectedOptions)
+            ? previousAnswer.selectedOptions
+            : []
         );
-        setShowTextInput(false);
+        // setShowTextInput();
+        setInput(previousAnswer.directTextInput);
       } else {
         setInput(
-          typeof previousAnswer.answer === "string" ? previousAnswer.answer : ""
+          typeof previousAnswer.directTextInput === "string"
+            ? previousAnswer.directTextInput
+            : ""
         );
         setShowTextInput(true);
       }
@@ -368,6 +385,7 @@ export default function SurveyChat() {
           </label>
         </div>
       ))}
+
       <Button
         variant="outline"
         className="w-full mt-2"
@@ -375,6 +393,19 @@ export default function SurveyChat() {
       >
         직접 입력하기
       </Button>
+
+      {showTextInput && (
+        <Textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={
+            state.answers.length < totalQuestions - 1
+              ? "답변을 입력하세요..."
+              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
+          }
+          disabled={state.isLoading}
+        />
+      )}
     </div>
   );
 
@@ -384,8 +415,6 @@ export default function SurveyChat() {
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          //추가추가
-
           placeholder={
             state.answers.length < totalQuestions - 1
               ? "답변을 입력하세요..."
@@ -393,6 +422,7 @@ export default function SurveyChat() {
           }
           disabled={state.isLoading}
         />
+
         {state.currentQuestion?.type === "multiple-choice" && (
           <Button
             type="button"
@@ -760,7 +790,14 @@ export default function SurveyChat() {
     return (
       <div className="space-y-4">
         <p className="font-medium">{state.currentQuestion?.text}</p>
+
+        {/*
         {state.currentQuestion?.type === "multiple-choice" && !showTextInput
+          ? renderMultipleChoice()
+          : renderTextInput()}
+*/}
+
+        {state.currentQuestion?.type === "multiple-choice"
           ? renderMultipleChoice()
           : renderTextInput()}
 
@@ -775,6 +812,17 @@ export default function SurveyChat() {
           <Button
             onClick={() => handleNext()}
             disabled={
+              !isLastQuestion &&
+              (state.isLoading || // 로딩 중이면 비활성화
+                //  !(input.trim() || selectedOptions.length > 0))
+                !(
+                  (typeof input === "string" && input.trim()) ||
+                  selectedOptions.length > 0
+                ))
+            }
+
+            /*
+            disabled={
               state.isLoading ||
               (!showTextInput &&
                 state.currentQuestion?.type === "multiple-choice" &&
@@ -783,6 +831,13 @@ export default function SurveyChat() {
                 !input.trim() &&
                 state.answers.length < totalQuestions - 1)
             }
+              */
+
+            /*
+            disabled={
+              state.isLoading || // 로딩 중이면 비활성화
+              !(input.trim() || selectedOptions.length > 0) 
+            } */
           >
             {state.isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -830,14 +885,22 @@ export default function SurveyChat() {
                 {state.answers.map((item, index) => (
                   <li className="mb-3" key={index}>
                     <p>
-                      <strong>질문 {index + 1}:</strong> {item.question}
+                      <strong>질문 :</strong> {item.question}
                     </p>
-                    <p>
-                      <strong>대답 {index + 1}:</strong>{" "}
-                      {Array.isArray(item.answer)
-                        ? item.answer.join(", ")
-                        : item.answer}
-                    </p>
+                    {item.directTextInput && (
+                      <p className="text-slate-600">
+                        <span>직접입력:</span> {item.directTextInput}
+                      </p>
+                    )}
+
+                    {item.selectedOptions.length > 0 && (
+                      <p className="text-slate-600">
+                        <span>선택입력:</span>{" "}
+                        {Array.isArray(item.selectedOptions)
+                          ? item.selectedOptions.join(", ")
+                          : item.selectedOptions}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>
