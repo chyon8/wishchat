@@ -389,7 +389,7 @@ export default function SurveyChat() {
           placeholder={
             state.answers.length < totalQuestions - 1
               ? "답변을 입력하세요..."
-              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 참고사이트, 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
+              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예)참고사이트, 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
           }
           disabled={state.isLoading}
         />
@@ -406,7 +406,7 @@ export default function SurveyChat() {
           placeholder={
             state.answers.length < totalQuestions - 1
               ? "답변을 입력하세요..."
-              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
+              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 참고 사이트, 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
           }
           disabled={state.isLoading}
         />
