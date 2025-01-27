@@ -137,39 +137,6 @@ export async function getSummary(answers: Answer[]) {
   }, validateSummaryResponse);
 }
 
-// 견적 계산
-
-/*
-
-export async function getEstimation(answers: Answer[]) {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      temperature: 0.7,
-      max_tokens: 2048,
-      messages: [
-        {
-          role: "system",
-          content: ESTIMATE_SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-          기간과 견적을 산정해주세요.`,
-        },
-      ],
-    });
-
-    return (
-      response?.choices[0]?.message?.content || "결과를 생성할 수 없습니다."
-    );
-  } catch (error) {
-    console.error("Error fetching estimation:", error);
-    return "에러가 발생했습니다. 다시 시도해주세요.";
-  }
-}
-*/
-
 export async function getEstimation(answers: Answer[], systemPrompt: string) {
   return retryOperation<ResponseWithContent>(async () => {
     const response = await openai.chat.completions.create({

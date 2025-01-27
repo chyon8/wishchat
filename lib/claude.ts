@@ -1,10 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
+  validateComplexityResponse,
   validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
 import {
+  COMPLEXITY_SYSTEM_PROMPT,
   //ESTIMATE_SYSTEM_PROMPT,
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
@@ -27,6 +29,8 @@ interface ResponseWithContent {
   planner?: number;
   pm?: number;
   reason?: string;
+  complexity?: string;
+  reasonComplexity?: string;
 }
 
 const anthropic = new Anthropic({
@@ -151,4 +155,23 @@ export async function getEstimation(answers: Answer[]) {
     });
     return response as ResponseWithContent;
   }, validateEstimationResponse);
+}
+
+export async function getComplexity(answers: Answer[]) {
+  return retryOperation(async () => {
+    const response = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20241022",
+      max_tokens: 2048,
+      temperature: 0.7,
+      system: COMPLEXITY_SYSTEM_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+            최종 결과를 정리해주세요.`,
+        },
+      ],
+    });
+    return response as ResponseWithContent;
+  }, validateComplexityResponse);
 }
