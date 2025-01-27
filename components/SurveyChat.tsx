@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import ComplexityDisplay from "./ComplexityDisplay";
+import EditableTextArea from "./EditableTextArea";
+import useItemRemoval from "../hooks/useItemRemoval";
 
 export default function SurveyChat() {
   const [state, setState] = useState<SurveyState>({
@@ -68,6 +70,11 @@ export default function SurveyChat() {
       additional: "",
     },
   });
+
+  const { handleRemove, handleAdd } = useItemRemoval(
+    registrationData,
+    setRegistrationData
+  );
 
   useEffect(() => {
     if (state.summary) {
@@ -328,7 +335,7 @@ export default function SurveyChat() {
             ? previousAnswer.selectedOptions
             : []
         );
-        // setShowTextInput();
+        setShowTextInput(previousAnswer.directTextInput !== "");
         setInput(previousAnswer.directTextInput);
       } else {
         setInput(
@@ -382,7 +389,7 @@ export default function SurveyChat() {
           placeholder={
             state.answers.length < totalQuestions - 1
               ? "답변을 입력하세요..."
-              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
+              : "추가로 알려주실 구체적인 사항이 있다면 알려주세요. 예) 참고사이트, 개발 환경, 기존 웹과 연동 필요 등 " // 마지막 질문
           }
           disabled={state.isLoading}
         />
@@ -403,7 +410,7 @@ export default function SurveyChat() {
           }
           disabled={state.isLoading}
         />
-
+        {/*
         {state.currentQuestion?.type === "multiple-choice" && (
           <Button
             type="button"
@@ -416,6 +423,7 @@ export default function SurveyChat() {
             선택지로 돌아가기
           </Button>
         )}
+          */}
       </div>
     </div>
   );
@@ -569,10 +577,19 @@ export default function SurveyChat() {
             </div>
             <div>
               <h3 className="font-semibold mb-2">필요 요소</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleAdd("requirements")}
+              >
+                <Plus className="h-4 w-4" />
+                추가
+              </Button>
               {registrationData.projectData.requirements.map((req, i) => (
-                <Textarea
+                <EditableTextArea
                   key={i}
                   value={req}
+                  onRemove={() => handleRemove("requirements", i)}
                   onChange={(e) => {
                     const newReqs = [
                       ...registrationData.projectData.requirements,
@@ -607,11 +624,19 @@ export default function SurveyChat() {
             </div>
             <div>
               <h3 className="font-semibold mb-2">주요 기능</h3>
-
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleAdd("features")}
+              >
+                <Plus className="h-4 w-4 " />
+                추가
+              </Button>
               {registrationData.projectData.features.map((feature, i) => (
-                <Textarea
+                <EditableTextArea
                   key={i}
                   value={feature}
+                  onRemove={() => handleRemove("features", i)}
                   onChange={(e) => {
                     const newFeatures = [
                       ...registrationData.projectData.features,
@@ -628,6 +653,54 @@ export default function SurveyChat() {
                   className="mb-2"
                 />
               ))}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">업무 범위</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleAdd("workRange")}
+              >
+                <Plus className="h-4 w-4" />
+                추가
+              </Button>
+              {registrationData.projectData.workRange.map((workRange, i) => (
+                <EditableTextArea
+                  key={i}
+                  value={workRange}
+                  onRemove={() => handleRemove("workRange", i)}
+                  onChange={(e) => {
+                    const workRange = [
+                      ...registrationData.projectData.workRange,
+                    ];
+                    workRange[i] = e.target.value;
+                    setRegistrationData((prev) => ({
+                      ...prev,
+                      projectData: {
+                        ...prev.projectData,
+                        workRange: workRange,
+                      },
+                    }));
+                  }}
+                  className="mb-2"
+                />
+              ))}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">추가 정보</h3>
+              <Textarea
+                value={registrationData.projectData.additional}
+                onChange={(e) =>
+                  setRegistrationData((prev) => ({
+                    ...prev,
+                    projectData: {
+                      ...prev.projectData,
+                      overview: e.target.value,
+                    },
+                  }))
+                }
+                className="min-h-[100px]"
+              />
             </div>
           </>
         )}

@@ -40,6 +40,10 @@ any) {
                   </li>
                 ))}
               </ul>
+              <span className="pl-8"> 🍠 :</span>
+              <span className="pl-6 text-slate-600">
+                {result.hoguma.toLocaleString()}원
+              </span>
               <div className="space-y-1">
                 <p className="font-bold mt-4">근거 설명:</p>{" "}
                 <p className="pl-4">{estimation.reason}</p>

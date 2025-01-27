@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
     // Send an email using Resend
     const { error } = await resend.emails.send({
       from: `${APP_NAME} <${SENDER_EMAIL}>`,
-      to: [email, RECIEVE_EMAIL],
+      //to: [email, RECIEVE_EMAIL],
+      to: [RECIEVE_EMAIL],
       subject: "새로운 프로젝트 등록!",
       react: EmailTemplate({ phone, email, projectData }),
     });
