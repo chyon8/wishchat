@@ -23,6 +23,7 @@ import {
 import ComplexityDisplay from "./ComplexityDisplay";
 import EditableTextArea from "./EditableTextArea";
 import useItemRemoval from "../hooks/useItemRemoval";
+import WorkRangeSelection from "./WorkRangeSelection";
 
 export default function SurveyChat() {
   const [state, setState] = useState<SurveyState>({
@@ -655,6 +656,7 @@ export default function SurveyChat() {
               ))}
             </div>
             <div>
+              {/* 업무 범위
               <h3 className="font-semibold mb-2">업무 범위</h3>
               <Button
                 variant="outline"
@@ -685,6 +687,19 @@ export default function SurveyChat() {
                   className="mb-2"
                 />
               ))}
+                */}
+              <WorkRangeSelection
+                selected={registrationData.projectData.workRange}
+                onChange={(newWorkRange) => {
+                  setRegistrationData((prev) => ({
+                    ...prev,
+                    projectData: {
+                      ...prev.projectData,
+                      workRange: newWorkRange,
+                    },
+                  }));
+                }}
+              />
             </div>
             <div>
               <h3 className="font-semibold mb-2">추가 정보</h3>
