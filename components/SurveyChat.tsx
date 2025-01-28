@@ -749,7 +749,7 @@ export default function SurveyChat() {
                     ...prev,
                     projectData: {
                       ...prev.projectData,
-                      overview: e.target.value,
+                      additional: e.target.value,
                     },
                   }))
                 }
