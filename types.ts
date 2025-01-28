@@ -28,6 +28,7 @@ interface QuestionResponse {
   text: string;
   type: "text" | "multiple-choice";
   options: string[];
+  description?: Record<string, string>;
 }
 
 interface Answer {
@@ -62,6 +63,8 @@ interface RegistrationData {
   email: string;
   phone: string;
   projectData: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    answer?: any;
     overview: string;
     requirements: string[];
     environment: string;

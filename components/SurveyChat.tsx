@@ -92,6 +92,7 @@ export default function SurveyChat() {
         },
       }));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.summary]);
 
@@ -112,6 +113,33 @@ export default function SurveyChat() {
       }
     }
   }, []);
+  useEffect(() => {
+    const storedData = localStorage.getItem("surveyState");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { answer, ...projectDataWithoutAnswer } =
+        registrationData.projectData;
+
+      const updatedData = {
+        ...parsedData,
+        summary: projectDataWithoutAnswer,
+      };
+
+      localStorage.setItem("surveyState", JSON.stringify(updatedData));
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { answer, ...projectDataWithoutAnswer } =
+        registrationData.projectData;
+
+      const newData = {
+        summary: projectDataWithoutAnswer,
+      };
+
+      localStorage.setItem("surveyState", JSON.stringify(newData));
+    }
+  }, [registrationData]);
 
   useEffect(() => {
     localStorage.setItem("surveyState", JSON.stringify(state));
@@ -214,6 +242,12 @@ export default function SurveyChat() {
           text: "필요하신 업무 범위를 말해주세요",
           type: "multiple-choice",
           options: ["기획", "디자인", "개발", "모르겠어요"],
+          /*
+          description: {
+            기획: "필요한 기능과 화면 흐름을 정리해 프로젝트의 기본 틀을 만드는 과정",
+            디자인: "사용자 경험을 고려해 화면과 동작을 설계하는 과정",
+            개발: "설계된 기능과 화면을 실제로 구현하는 과정",
+          }, */
         },
         {
           text: "추가적인 정보가 있다면 알려주세요",
@@ -349,6 +383,9 @@ export default function SurveyChat() {
     }
   };
 
+  const hasDescription =
+    state.currentQuestion && "description" in state.currentQuestion;
+
   const renderMultipleChoice = () => (
     <div className="space-y-2">
       {state.currentQuestion?.options.map((option, i) => (
@@ -370,7 +407,9 @@ export default function SurveyChat() {
             htmlFor={`option-${i}`}
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            {option}
+            {hasDescription && state.currentQuestion?.description?.[option]
+              ? `${option}: ${state.currentQuestion?.description?.[option]}`
+              : option}
           </label>
         </div>
       ))}
