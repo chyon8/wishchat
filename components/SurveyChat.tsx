@@ -310,6 +310,7 @@ export default function SurveyChat() {
           setState((prev) => ({
             ...prev,
             stage: "questioning",
+
             currentQuestion: data.question,
             answers: newAnswers,
             isLoading: false,
@@ -947,6 +948,7 @@ export default function SurveyChat() {
 
   return (
     <>
+      <p>질문 개수: {AI_QUESTIONS}</p>
       <Card className="w-full max-w-2xl mx-auto">
         <CardContent className="pt-6">
           <Progress value={state.progress} className="mb-6" />

@@ -58,6 +58,9 @@ interface EstimationResponse {
   reason: string;
 }
 
+interface NumOfQuestionsResponse {
+  numOfQuestions: number;
+}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface RegistrationData {
   email: string;

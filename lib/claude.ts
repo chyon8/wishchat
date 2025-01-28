@@ -1,13 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
   validateComplexityResponse,
-  validateEstimationResponse,
+  validateNumOfQuestions,
+  //validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
 import {
   COMPLEXITY_SYSTEM_PROMPT,
-  //ESTIMATE_SYSTEM_PROMPT,
+  QUESTION_NUMBER_PROMPT,
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
 } from "./prompts";
@@ -31,6 +32,7 @@ interface ResponseWithContent {
   reason?: string;
   complexity?: string;
   reasonComplexity?: string;
+  numOfQuestions?: number;
 }
 
 const anthropic = new Anthropic({
@@ -113,38 +115,15 @@ export async function getSummary(answers: Answer[]) {
 }
 
 // 견적 계산
+
 /*
-export async function getEstimation(answers: Answer[]) {
-  try {
-    const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 2048,
-      temperature: 0.7,
-      system: ESTIMATE_SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-            기간과 견적을 계산해주세요.`,
-        },
-      ],
-    });
-
-    return response.content[0].text || "결과를 생성할 수 없습니다.";
-  } catch (error) {
-    console.error("Error fetching estimation:", error);
-    return "에러가 발생했습니다. 다시 시도해주세요.";
-  }
-}
-*/
-
 export async function getEstimation(answers: Answer[]) {
   return retryOperation(async () => {
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
       max_tokens: 2048,
       temperature: 0.7,
-      system: SUMMARY_SYSTEM_PROMPT,
+      system: ESTIMATE_SYSTEM_PROMPT,
       messages: [
         {
           role: "user",
@@ -156,6 +135,7 @@ export async function getEstimation(answers: Answer[]) {
     return response as ResponseWithContent;
   }, validateEstimationResponse);
 }
+*/
 
 export async function getComplexity(answers: Answer[]) {
   return retryOperation(async () => {
@@ -168,10 +148,29 @@ export async function getComplexity(answers: Answer[]) {
         {
           role: "user",
           content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-            최종 결과를 정리해주세요.`,
+           복잡도를 평가해주세요.`,
         },
       ],
     });
     return response as ResponseWithContent;
   }, validateComplexityResponse);
+}
+
+export async function getNumOfQuestions(answers: Answer[]) {
+  return retryOperation(async () => {
+    const response = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20241022",
+      max_tokens: 2048,
+      temperature: 0.7,
+      system: QUESTION_NUMBER_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+            질문개수를 판단해주세요.`,
+        },
+      ],
+    });
+    return response as ResponseWithContent;
+  }, validateNumOfQuestions);
 }

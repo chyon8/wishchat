@@ -75,3 +75,13 @@ export function validateComplexityResponse(
 
   return true;
 }
+
+export function validateNumOfQuestions(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  response: any
+): response is NumOfQuestionsResponse {
+  if (!response || typeof response !== "object") return false;
+  if (typeof response.numOfQuestions !== "number") return false;
+
+  return true;
+}
