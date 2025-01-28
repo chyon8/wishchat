@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 interface ManMonth {
   frontend: number;
   backend: number;
@@ -9,7 +9,6 @@ interface ManMonth {
   reason: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SurveyState {
   stage: "initial" | "questioning" | "summary";
   currentQuestion: QuestionResponse | null;
@@ -61,7 +60,7 @@ interface EstimationResponse {
 interface NumOfQuestionsResponse {
   numOfQuestions: number;
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 interface RegistrationData {
   email: string;
   phone: string;
