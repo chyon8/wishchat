@@ -42,6 +42,7 @@ export default function SurveyChat() {
     isRegistered: false,
     estimation: null,
     complexity: null,
+    numberOfQuestions: 2,
   });
 
   const { toast } = useToast();
@@ -52,7 +53,7 @@ export default function SurveyChat() {
   const [activeTab, setActiveTab] = useState("preview");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const AI_QUESTIONS = 5;
+  const AI_QUESTIONS = Math.max(2, Math.min(state.numberOfQuestions, 5));
   const HUMAN_QUESTIONS = 2;
   const totalAIQuestions = AI_QUESTIONS; // AI 질문 개수
   const totalHumanQuestions = HUMAN_QUESTIONS; // HUMAN 질문 개수
@@ -163,6 +164,7 @@ export default function SurveyChat() {
       isRegistered: false,
       estimation: null,
       complexity: null,
+      numberOfQuestions: 2,
     });
     setInput("");
     setSelectedOptions([]);
@@ -182,6 +184,8 @@ export default function SurveyChat() {
       requirements: registrationData.projectData.requirements,
       environment: registrationData.projectData.environment,
       features: registrationData.projectData.features,
+      additional: registrationData.projectData.additional,
+      workRange: registrationData.projectData.workRange,
     };
 
     try {
@@ -296,17 +300,27 @@ export default function SurveyChat() {
       } else {
         // AI 질문 개수만큼 질문을 완료한 후 HUMAN 질문 진행
         if (newAnswers.length < totalAIQuestions) {
+          const apiEndpoint =
+            newAnswers.length === 1
+              ? "/api/chat/firstQuestion"
+              : "/api/chat/question";
+
+          const response = await fetch(apiEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answers: newAnswers }),
+          });
+          /*
           const response = await fetch("/api/chat/question", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ answers: newAnswers }),
           });
-
+*/
           if (!response.ok) throw new Error("Failed to get question");
 
           const data = await response.json();
           const nextIndex = state.currentIndex + 1;
-
           setState((prev) => ({
             ...prev,
             stage: "questioning",
@@ -315,6 +329,8 @@ export default function SurveyChat() {
             answers: newAnswers,
             isLoading: false,
             currentIndex: nextIndex,
+            numberOfQuestions:
+              data.question?.numOfQuestions ?? prev.numberOfQuestions,
             progress: Math.min((nextIndex / totalQuestions) * 100, 100),
           }));
 
@@ -976,7 +992,7 @@ export default function SurveyChat() {
                 {state.answers.map((item, index) => (
                   <li className="mb-3" key={index}>
                     <p>
-                      <strong>질문 :</strong> {item.question}
+                      <strong>질문{index + 1} :</strong> {item.question}
                     </p>
                     {item.directTextInput && (
                       <p className="text-slate-600">

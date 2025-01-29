@@ -21,6 +21,7 @@ interface SurveyState {
   isRegistered: boolean;
   estimation: ManMonth | null;
   complexity: ComplexityResponse | null;
+  numberOfQuestions: number;
 }
 
 interface QuestionResponse {
@@ -57,8 +58,12 @@ interface EstimationResponse {
   reason: string;
 }
 
-interface NumOfQuestionsResponse {
-  numOfQuestions: number;
+interface FirstQuestion {
+  text: string;
+  type: "text" | "multiple-choice";
+  options: string[];
+  description?: Record<string, string>;
+  numOfQuestions?: number;
 }
 
 interface RegistrationData {

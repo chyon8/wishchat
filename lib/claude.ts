@@ -1,14 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
   validateComplexityResponse,
-  validateNumOfQuestions,
+  validateFirstQuestion,
   //validateEstimationResponse,
   validateQuestionResponse,
   validateSummaryResponse,
 } from "./valiidators";
 import {
   COMPLEXITY_SYSTEM_PROMPT,
-  QUESTION_NUMBER_PROMPT,
+  FIRST_QUESTION_PROMPT,
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
 } from "./prompts";
@@ -156,21 +156,21 @@ export async function getComplexity(answers: Answer[]) {
   }, validateComplexityResponse);
 }
 
-export async function getNumOfQuestions(answers: Answer[]) {
+export async function getFirstQuestion(answers: Answer[]) {
   return retryOperation(async () => {
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
       max_tokens: 2048,
       temperature: 0.7,
-      system: QUESTION_NUMBER_PROMPT,
+      system: FIRST_QUESTION_PROMPT,
       messages: [
         {
           role: "user",
           content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-            질문개수를 판단해주세요.`,
+            질문개수와 후속질문을 생성해주세요.`,
         },
       ],
     });
     return response as ResponseWithContent;
-  }, validateNumOfQuestions);
+  }, validateFirstQuestion);
 }

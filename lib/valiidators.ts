@@ -76,12 +76,19 @@ export function validateComplexityResponse(
   return true;
 }
 
-export function validateNumOfQuestions(
+export function validateFirstQuestion(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   response: any
-): response is NumOfQuestionsResponse {
+): response is FirstQuestion {
   if (!response || typeof response !== "object") return false;
   if (typeof response.numOfQuestions !== "number") return false;
+  if (typeof response.text !== "string") return false;
+  if (!["text", "multiple-choice"].includes(response.type)) return false;
+  if (response.type === "multiple-choice") {
+    if (!Array.isArray(response.options)) return false;
+    if (response.options.length !== 6) return false;
+    if (!response.options.includes("잘 모르겠어요")) return false;
+  }
 
   return true;
 }
