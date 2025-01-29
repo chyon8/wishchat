@@ -157,7 +157,7 @@ export const MID_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
    "designer": manmonth,
    "planner": manmonth,
    "pm": manmonth,
-   "reason": "기간 산정 근거 설명 + 너가 받은 프로젝트 내용 중 additional의 값을 적어봐.",
+   "reason": "기간 산정 근거 설명",
 }
 
 
