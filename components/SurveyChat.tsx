@@ -24,6 +24,12 @@ import ComplexityDisplay from "./ComplexityDisplay";
 import EditableTextArea from "./EditableTextArea";
 import useItemRemoval from "../hooks/useItemRemoval";
 import WorkRangeSelection from "./WorkRangeSelection";
+import {
+  trackEstimateView,
+  trackQuestionResponse,
+  trackStep,
+  trackSummaryView,
+} from "@/lib/analytics";
 
 export default function SurveyChat() {
   const [state, setState] = useState<SurveyState>({
@@ -202,6 +208,9 @@ export default function SurveyChat() {
       }
 
       const data = await response.json();
+
+      trackEstimateView(data.estimateAmount);
+
       setState((prev) => ({
         ...prev,
         estimation: data.estimation,
@@ -220,6 +229,12 @@ export default function SurveyChat() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleNext = async (directInput?: string) => {
     if (state.isLoading) return;
+
+    trackQuestionResponse(
+      state.currentIndex,
+      state.currentQuestion?.type === "text" ? "text" : "multiple-choice",
+      state.currentQuestion?.text || ""
+    );
 
     setState((prev) => ({
       ...prev,
@@ -261,6 +276,8 @@ export default function SurveyChat() {
       ];
 
       if (newAnswers.length >= totalQuestions) {
+        trackSummaryView();
+
         // 서머리로 상태 변경 먼저
         setState((prev) => ({
           ...prev,
@@ -298,6 +315,11 @@ export default function SurveyChat() {
           },
         }));
       } else {
+        trackStep(
+          state.currentIndex + 1,
+          newAnswers.length < totalAIQuestions ? "ai" : "human",
+          state.currentQuestion?.text || ""
+        );
         // AI 질문 개수만큼 질문을 완료한 후 HUMAN 질문 진행
         if (newAnswers.length < totalAIQuestions) {
           const apiEndpoint =

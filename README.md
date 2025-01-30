@@ -63,7 +63,7 @@ bun dev
 
 ## 사용 기술
 
-- **프레임워크**: Next.js 13.4
+- **프레임워크**: Next.js
 - **언어**: Typescript
 - **API**: Anthropic API
 - **이메일 발송**: Resend
