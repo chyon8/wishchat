@@ -20,6 +20,21 @@ export function validateSummaryResponse(
   response: any
 ): response is SummaryResponse {
   if (!response || typeof response !== "object") return false;
+
+  const allowedKeys = [
+    "overview",
+    "requirements",
+    "environment",
+    "features",
+    "workRange",
+    "additional",
+  ];
+
+  // Object.keys()로 실제 키값들을 가져와서 허용된 키값 외의 것이 있는지 검사
+  const actualKeys = Object.keys(response);
+  if (actualKeys.some((key) => !allowedKeys.includes(key))) return false;
+  if (allowedKeys.some((key) => !actualKeys.includes(key))) return false;
+
   if (typeof response.overview !== "string") return false;
   if (!Array.isArray(response.requirements)) return false;
   if (typeof response.environment !== "string") return false;

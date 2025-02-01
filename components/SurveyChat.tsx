@@ -734,38 +734,6 @@ export default function SurveyChat() {
               ))}
             </div>
             <div>
-              {/* 업무 범위
-              <h3 className="font-semibold mb-2">업무 범위</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleAdd("workRange")}
-              >
-                <Plus className="h-4 w-4" />
-                추가
-              </Button>
-              {registrationData.projectData.workRange.map((workRange, i) => (
-                <EditableTextArea
-                  key={i}
-                  value={workRange}
-                  onRemove={() => handleRemove("workRange", i)}
-                  onChange={(e) => {
-                    const workRange = [
-                      ...registrationData.projectData.workRange,
-                    ];
-                    workRange[i] = e.target.value;
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      projectData: {
-                        ...prev.projectData,
-                        workRange: workRange,
-                      },
-                    }));
-                  }}
-                  className="mb-2"
-                />
-              ))}
-                */}
               <WorkRangeSelection
                 selected={registrationData.projectData.workRange}
                 onChange={(newWorkRange) => {
@@ -1011,7 +979,7 @@ export default function SurveyChat() {
             <div className="space-y-4">
               <h2 className="text-xl font-bold">질문 및 답변 원본</h2>
               <ul className="list-none pl-5">
-                {state.answers.map((item, index) => (
+                {state.answers?.map((item, index) => (
                   <li className="mb-3" key={index}>
                     <p>
                       <strong>질문{index + 1} :</strong> {item.question}
@@ -1021,7 +989,7 @@ export default function SurveyChat() {
                         <span>직접입력:</span> {item.directTextInput}
                       </p>
                     )}
-
+                    {/*
                     {item.selectedOptions.length > 0 && (
                       <p className="text-slate-600">
                         <span>선택입력:</span>{" "}
@@ -1029,7 +997,15 @@ export default function SurveyChat() {
                           ? item.selectedOptions.join(", ")
                           : item.selectedOptions}
                       </p>
-                    )}
+                    )} */}
+
+                    {Array.isArray(item.selectedOptions) &&
+                      item.selectedOptions.length > 0 && (
+                        <p className="text-slate-600">
+                          <span>선택입력:</span>{" "}
+                          {item.selectedOptions.join(", ")}
+                        </p>
+                      )}
                   </li>
                 ))}
               </ul>
