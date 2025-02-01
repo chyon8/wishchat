@@ -419,6 +419,11 @@ export default function SurveyChat() {
         );
         setShowTextInput(true);
       }
+    } else {
+      const previousIndex = state.currentIndex - 1;
+      const previousAnswer = state.answers[previousIndex];
+      handleReset();
+      setInput(previousAnswer.directTextInput);
     }
   };
 
