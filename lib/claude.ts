@@ -158,7 +158,7 @@ export async function getFirstQuestion(answers: Answer[]) {
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
       max_tokens: 2048,
-      temperature: 0.7,
+      temperature: 0.5,
       system: FIRST_QUESTION_PROMPT,
       messages: [
         {
