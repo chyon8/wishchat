@@ -6,7 +6,7 @@ interface ManMonth {
   designer: number;
   planner: number;
   pm: number;
-  reason: string;
+  //  reason: string;
 }
 
 interface SurveyState {
@@ -21,6 +21,7 @@ interface SurveyState {
   isRegistered: boolean;
   estimation: ManMonth | null;
   complexity: ComplexityResponse | null;
+  factors: string | null;
   numberOfQuestions: number;
 }
 
@@ -56,7 +57,7 @@ interface EstimationResponse {
   designer: number;
   planner: number;
   pm: number;
-  reason: string;
+  // reason: string;
 }
 
 interface FirstQuestion {

@@ -160,7 +160,6 @@ export const EASY_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
    "designer": manmonth,
    "planner": manmonth,
    "pm": manmonth,
-   "reason": "기간 산정 근거 상세하게"  
 }
 
 
@@ -196,7 +195,6 @@ export const MID_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
    "designer": manmonth,
    "planner": manmonth,
    "pm": manmonth,
-   "reason": "기간 산정 근거 상세하게"  
 }
 
 
@@ -237,10 +235,24 @@ export const COMPLEXITY_SYSTEM_PROMPT = `최종결과를 바탕으로 프로젝�
 응답 형식:
 {
   "complexity":"mid",
-  "reasonComplexity": "복잡도에 영향을 주는 기능들을 구체적으로 설명하세요. 어떤 기능들 때문에 견적이 상승하는지, 반대로 어떤 방식으로 구현하면 견적을 낮출 수 있는지 실용적인 예시와 함께 상세하게 제시해주세요.",
+  "reasonComplexity": "복잡도 평가 근거 제시",
 }
 `;
 
 //실시간 데이터 처리와 동시 사용자 처리,
 //동시성 또는 실시간 처리가 필요하지 않고, 주기적인 동작으로 충분한 경우
-//복잡도 평가 근거 제시
+
+export const ESTIMATE_FACTOR_SYSTEM = `프로젝트 내용을 바탕으로 응답을 생성하세요.
+
+응답 규칙:
+1. 어떤 기능들 때문에 견적이 상승하는지, 반대로 어떤 방식으로 구현하면 견적을 낮출 수 있는지 간략하게 제시해주세요.",
+2. 응답을 벗어난 어떤 설명이나 부연설명도 하지 마세요.
+
+주의사항:
+- 응답은 순수한 텍스트 형식으로만 작성하세요.
+- 마크다운, HTML, 특수 기호(별표, 대괄호 등)를 절대 사용하지 마세요.
+- 줄바꿈은 일반적인 텍스트 줄바꿈(\n)만 사용하세요.
+- 강조 표현(굵게, 기울임 등)을 사용하지 마세요.
+
+
+`;

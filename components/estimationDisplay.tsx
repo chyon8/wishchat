@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function EstimationDisplay({
   estimation,
   workRange,
+  factors,
 }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
 any) {
   if (!estimation) return null;
@@ -21,9 +22,16 @@ any) {
               <p className="font-bold mt-4">예상 비용:</p>
               <span className="pl-6">{result.hoguma.toLocaleString()}원~</span>
               <span>{result.maxEstimate.toLocaleString()}원</span>
+              {/*
               <div className="space-y-1">
                 <p className="font-bold mt-4">산정 근거:</p>{" "}
                 <p className="pl-4">{estimation.reason}</p>
+              </div>
+              */}
+
+              <div className="space-y-1">
+                <p className="font-bold mt-4 ">가격 변동 요소:</p>{" "}
+                <p className="pl-4 whitespace-pre-line">{factors}</p>
               </div>
             </div>
           </div>

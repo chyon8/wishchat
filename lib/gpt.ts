@@ -9,6 +9,7 @@ import {
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
   COMPLEXITY_SYSTEM_PROMPT,
+  ESTIMATE_FACTOR_SYSTEM,
 } from "./prompts";
 
 // Interface for the validated/parsed response
@@ -176,4 +177,31 @@ export async function getComplexity(answers: Answer[]) {
     });
     return response as unknown as OpenAIResponse;
   }, validateComplexityResponse);
+}
+
+export async function getEstimateFactors(answers: Answer[]): Promise<string> {
+  const response = (await openai.chat.completions.create({
+    model: "gpt-4o",
+    temperature: 0.7,
+    max_tokens: 2048,
+    messages: [
+      {
+        role: "system",
+        content: ESTIMATE_FACTOR_SYSTEM,
+      },
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+             견적 변동 요소를 설명하세요.`,
+      },
+    ],
+  })) as unknown as OpenAIResponse;
+
+  const content = response.choices[0]?.message?.content;
+
+  if (!content) {
+    throw new Error("Failed to get estimate factors from OpenAI");
+  }
+
+  return content;
 }

@@ -48,6 +48,7 @@ export default function SurveyChat() {
     isRegistered: false,
     estimation: null,
     complexity: null,
+    factors: null,
     numberOfQuestions: 2,
   });
 
@@ -219,6 +220,7 @@ export default function SurveyChat() {
       isRegistered: false,
       estimation: null,
       complexity: null,
+      factors: null,
       numberOfQuestions: 2,
     });
     setInput("");
@@ -265,6 +267,7 @@ export default function SurveyChat() {
         ...prev,
         estimation: data.estimation,
         complexity: data.complexity,
+        factors: data.factors,
         isLoading: false,
       }));
     } catch (error) {
@@ -1047,6 +1050,7 @@ export default function SurveyChat() {
       {state.stage !== "initial" && state.estimation !== null && (
         <EstimationDisplay
           estimation={state.estimation}
+          factors={state.factors}
           workRange={registrationData.projectData.workRange}
         />
       )}
