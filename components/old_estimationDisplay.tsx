@@ -30,6 +30,7 @@ any) {
 
             <div className="space-y-1">
               <p className="font-bold mt-4">총 예상 비용:</p>
+              {/*
               <ul className="pl-4">
                 {result.adjustedCosts.map((cost: number, index: number) => (
                   <li key={index}>
@@ -40,6 +41,7 @@ any) {
                   </li>
                 ))}
               </ul>
+              */}
               <span className="pl-8"> 🍠 :</span>
               <span className="pl-6 text-slate-600">
                 {result.hoguma.toLocaleString()}원
