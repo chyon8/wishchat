@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getNextQuestion } from "@/lib/claude";
 //import { getNextQuestion } from "@/lib/gpt";
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {

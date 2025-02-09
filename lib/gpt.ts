@@ -11,9 +11,6 @@ import {
   COMPLEXITY_SYSTEM_PROMPT,
 } from "./prompts";
 
-export const dynamic = "force-dynamic";
-export const runtime = "edge";
-
 // Interface for the validated/parsed response
 interface ResponseWithContent {
   content?: { text: string }[];

@@ -13,9 +13,6 @@ import {
   SUMMARY_SYSTEM_PROMPT,
 } from "./prompts";
 
-export const dynamic = "force-dynamic";
-export const runtime = "edge";
-
 interface ResponseWithContent {
   content?: { text: string }[];
   text?: string;

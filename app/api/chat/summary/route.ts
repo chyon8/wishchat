@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSummary } from "@/lib/claude";
 //import { getSummary } from "@/lib/gpt";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   try {
     const { answers } = await req.json();

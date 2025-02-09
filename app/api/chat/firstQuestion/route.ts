@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 //import { getNextQuestion } from "@/lib/gpt";
 import { getFirstQuestion } from "@/lib/claude";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   try {
     const { answers } = await req.json();

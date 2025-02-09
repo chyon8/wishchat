@@ -9,6 +9,8 @@ import {
   EASY_ESTIMATE_SYSTEM_PROMPT,
 } from "@/lib/prompts";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   try {
     const { requestData } = await req.json();
