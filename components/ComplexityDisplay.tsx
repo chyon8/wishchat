@@ -21,7 +21,7 @@ any) {
             </div>
             <div className="space-y-1">
               <p>
-                <span className="font-bold">근거: </span>
+                <span className="font-bold">변동 요소: </span>
                 {complexity.reasonComplexity}{" "}
               </p>
               <p className="text-sm text-slate-600">

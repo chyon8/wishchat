@@ -37,17 +37,20 @@ export const calculateEstimation = (
   const totalCost = Object.values(costs).reduce((acc, curr) => acc + curr, 0);
   const optimalEstimate = totalCost * 0.8;
   const hoguma = optimalEstimate / 2;
+  const maxEstimate = totalCost * 1.0;
 
+  /*
   // 0.5, 0.6, 0.7, 0.8, 0.9, 1을 곱한 값들을 배열로 반환
   const adjustedCosts = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0].map(
     (factor) => totalCost * factor
   );
-
+*/
   return {
     manmonth: adjustedEstimation,
     costs,
     totalCost,
     hoguma,
-    adjustedCosts, // 0.5, 0.6, 0.7, 0.8, 0.9, 1을 곱한 값들
+    maxEstimate,
+    // adjustedCosts, // 0.5, 0.6, 0.7, 0.8, 0.9, 1을 곱한 값들
   };
 };

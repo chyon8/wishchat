@@ -76,6 +76,7 @@ export default function SurveyChat() {
       features: [],
       workRange: [],
       additional: "",
+      suggestion: "",
     },
   });
 
@@ -83,6 +84,53 @@ export default function SurveyChat() {
     registrationData,
     setRegistrationData
   );
+
+  const handleCopy = () => {
+    const { projectData } = registrationData;
+    const htmlToCopy = `
+    <div>
+      <h3><b>프로젝트 개요</b></h3>
+      <p>${projectData.overview}</p>
+      
+      <h3><b>필요 요소</b></h3>
+      <ul>${projectData.requirements
+        .map((req) => `<li>${req}</li>`)
+        .join("")}</ul>
+      
+      <h3><b>개발 환경/언어</b></h3>
+      <p>${projectData.environment}</p>
+      
+      <h3><b>주요 기능</b></h3>
+      <ul>${projectData.features
+        .map((feature) => `<li>${feature}</li>`)
+        .join("")}</ul>
+      
+      <h3><b>업무 범위</b></h3>
+      <ul>${projectData.workRange.map((req) => `<li>${req}</li>`).join("")}</ul>
+      
+      <h3><b>추가 정보</b></h3>
+      <p>${projectData.additional}</p>
+      
+      <h3><b>AI 제안</b></h3>
+      <p>${projectData.suggestion}</p>
+    </div>
+  `;
+    navigator.clipboard
+      .write([
+        new ClipboardItem({
+          "text/html": new Blob([htmlToCopy], { type: "text/html" }),
+          "text/plain": new Blob([htmlToCopy.replace(/<[^>]+>/g, "")], {
+            type: "text/plain",
+          }),
+        }),
+      ])
+      .then(() => {
+        toast({
+          title: "✅ 프로젝트 요약이 복사되었습니다!",
+          duration: 2000,
+        });
+      });
+  };
 
   useEffect(() => {
     if (state.summary) {
@@ -96,6 +144,7 @@ export default function SurveyChat() {
           features: state.summary?.features || [],
           workRange: state.summary?.workRange || [],
           additional: state.summary?.additional || "",
+          suggestion: state.summary?.suggestion || "",
         },
       }));
     }
@@ -192,6 +241,7 @@ export default function SurveyChat() {
       features: registrationData.projectData.features,
       additional: registrationData.projectData.additional,
       workRange: registrationData.projectData.workRange,
+      suggestion: registrationData.projectData.suggestion,
     };
 
     try {
@@ -312,6 +362,7 @@ export default function SurveyChat() {
             features: data.summary.features || [],
             workRange: data.summary.workRange || [],
             additional: data.summary.additional || "",
+            suggestion: data.summary.suggestion || "",
           },
         }));
       } else {
@@ -580,6 +631,11 @@ export default function SurveyChat() {
 
     return (
       <div className="space-y-4">
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={handleCopy}>
+            전체 복사하기
+          </Button>
+        </div>
         <h2 className="text-xl font-bold">프로젝트 요약</h2>
 
         <div className="flex space-x-4">
@@ -605,11 +661,13 @@ export default function SurveyChat() {
           <>
             <div>
               <h3 className="font-semibold">프로젝트 개요</h3>
-              <p>{registrationData.projectData.overview}</p>
+              <p className="whitespace-pre-line ">
+                {registrationData.projectData.overview}
+              </p>
             </div>
             <div>
               <h3 className="font-semibold">필요 요소</h3>
-              <ul className="list-disc pl-5">
+              <ul className="list-disc pl-5 whitespace-pre-line ">
                 {registrationData.projectData.requirements.map((req, i) => (
                   <li key={i}>{req}</li>
                 ))}
@@ -617,11 +675,13 @@ export default function SurveyChat() {
             </div>
             <div>
               <h3 className="font-semibold">개발 환경/언어</h3>
-              <p>{registrationData.projectData.environment}</p>
+              <p className="whitespace-pre-line ">
+                {registrationData.projectData.environment}
+              </p>
             </div>
             <div>
               <h3 className="font-semibold">주요 기능</h3>
-              <ul className="list-disc pl-5">
+              <ul className="list-disc pl-5 whitespace-pre-line ">
                 {registrationData.projectData.features.map((feature, i) => (
                   <li key={i}>{feature}</li>
                 ))}
@@ -629,7 +689,7 @@ export default function SurveyChat() {
             </div>
             <div>
               <h3 className="font-semibold">업무 범위</h3>
-              <ul className="list-disc pl-5">
+              <ul className="list-disc pl-5 whitespace-pre-line ">
                 {registrationData.projectData.workRange.map((req, i) => (
                   <li key={i}>{req}</li>
                 ))}
@@ -637,7 +697,15 @@ export default function SurveyChat() {
             </div>
             <div>
               <h3 className="font-semibold">추가 정보</h3>
-              <p>{registrationData.projectData.additional}</p>
+              <p className="whitespace-pre-line ">
+                {registrationData.projectData.additional}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-600">AI 제안</h3>
+              <p className="text-slate-600 whitespace-pre-line">
+                {registrationData.projectData.suggestion}
+              </p>
             </div>
           </>
         ) : (
@@ -773,6 +841,7 @@ export default function SurveyChat() {
 
         {/* code for summary */}
 
+        {/*
         <div className="flex gap-2 mt-6">
           <Button
             disabled={state.isRegistered}
@@ -790,21 +859,26 @@ export default function SurveyChat() {
             새로운 상담 시작
           </Button>
         </div>
-
-        <Button
-          className="flex-1"
-          onClick={handleEstimate}
-          disabled={state.isLoading}
-        >
-          {state.isLoading ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>계산 중...</span>
-            </div>
-          ) : (
-            "견적 계산하기"
-          )}
-        </Button>
+*/}
+        <div className="flex gap-2 mt-6">
+          <Button
+            className="flex-1"
+            onClick={handleEstimate}
+            disabled={state.isLoading}
+          >
+            {state.isLoading ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>계산 중...</span>
+              </div>
+            ) : (
+              "예상 견적 보기"
+            )}
+          </Button>
+          <Button variant="outline" className="flex-1" onClick={handleReset}>
+            새로운 상담 시작
+          </Button>
+        </div>
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent>

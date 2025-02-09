@@ -28,6 +28,7 @@ export function validateSummaryResponse(
     "features",
     "workRange",
     "additional",
+    "suggestion",
   ];
 
   // Object.keys()로 실제 키값들을 가져와서 허용된 키값 외의 것이 있는지 검사
@@ -36,6 +37,7 @@ export function validateSummaryResponse(
   if (allowedKeys.some((key) => !actualKeys.includes(key))) return false;
 
   if (typeof response.overview !== "string") return false;
+  if (typeof response.suggestion !== "string") return false;
   if (!Array.isArray(response.requirements)) return false;
   if (typeof response.environment !== "string") return false;
   if (!Array.isArray(response.features)) return false;

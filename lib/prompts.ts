@@ -21,6 +21,7 @@ export const FIRST_QUESTION_PROMPT = `당신은 IT 프로젝트 컨설턴트입�
 - 프로젝트 무관 답변 시 관련 답변을 유도하세요.
 - 선택지와 질문의 길이는 최대한 짧게 구성하세요. 가독성이 최우선 사항입니다.
 - IT용어는 최소한으로 사용하고 이용하게 된다면 괄호안에 설명을 제공하세요.
+- 선택지는 Multi-Select가 가능하게 제공되니 "~만 필요합니다", "모두 필요합니다"등과 같은 워딩은 쓰지마세요.  
 
 
 <응답 형식>
@@ -50,6 +51,7 @@ export const QUESTION_SYSTEM_PROMPT = `당신은 IT 프로젝트 컨설턴트입
 4, 프로젝트 무관 답변 시 관련 답변을 유도하세요.
 5, 선택지와 질문의 길이는 최대한 짧게 구성하세요. 가독성이 최우선 사항입니다.
 6, IT용어는 최소한으로 사용하고 이용하게 된다면 괄호안에 설명을 제공하세요.
+7. 선택지는 Multi-Select가 가능하게 제공되니 "~만 필요합니다", "모두 필요합니다"등과 같은 워딩은 쓰지마세요. 
 
 응답 형식:
 {
@@ -73,8 +75,39 @@ export const QUESTION_SYSTEM_PROMPT = `당신은 IT 프로젝트 컨설턴트입
   "options": []
 }`;
 
-//어떤 서비스를 만들고 싶으세요?
+export const SUMMARY_SYSTEM_PROMPT = `지금까지의 답변을 바탕으로 최종 결과를 작성해주세요.
+단순한 정리가 아닌 기본 내용을 바탕으로 더 상세한 추가 사항을 추측해서 작성해야합니다. 다만, 유저의 변경사항을 너무 복잡하게 바꾸지 마세요.
 
+<지시 사상>
+1. 요약 생성
+2. 추가 제안
+
+<공통 응답 규칙>
+1. 반드시 아래 JSON 형식으로만 응답하세요.
+2. JSON 형식을 벗어난 어떤 설명이나 부연설명도 하지 마세요.
+3. 아래 JSON 형식에서 제공된 키(overview, requirements, environment, features, workRange, additional,suggestion) 외에는 절대 포함하지 마세요.
+
+< 요약 응답 규칙>
+1. 답변 시 더 필요할 것으로 예상되는 features들을 상세하게 추측해서 내용을 반환하세요. 관리자페이지 등 유저가 생각하지못했을법한 기능들을 추가해야합니다.
+2. 다만, 유저의 변경사항을 너무 복잡하게 바꾸지 마세요.
+
+<추가 제안 응답 규칙>
+1. 요약된 프로젝트 내용을 기반으로 컨설팅을 시행합니다.
+2. 추가적인 기능 추천, 개발방향 제안, 고려하면 좋은 점 등을 생각해서 고객에게 제안하세요.
+3, 너무 기술적인 용어를 쓰기보단 개발지식이 없는 유저들도 이해하기 쉽도록 친절하게 작성하세요.
+
+반드시 다음 JSON 형식으로 응답하세요:
+{
+  "overview": "프로젝트 개요",
+  "requirements": ["필요 요소1", "필요 요소2"],
+  "environment": "",
+  "features": ["핵심 기능1", "핵심기능2", ...]
+  "workRange": ["기획", "개발", "디자인"],
+  "additional": "additional" or "없음",
+  "suggestion": "youur suggestions"
+}`;
+
+/*
 export const SUMMARY_SYSTEM_PROMPT = `지금까지의 답변을 바탕으로 최종 결과를 정리해주세요.
 
 응답 규칙:
@@ -91,6 +124,7 @@ export const SUMMARY_SYSTEM_PROMPT = `지금까지의 답변을 바탕으로 최
   "workRange": ["기획", "개발", "디자인"],
   "additional" "additional" or "없음",
 }`;
+*/
 
 // "environment": "개발 환경/언어 or '개발환경 및 언어 제안 부탁드립니다'",
 
@@ -126,7 +160,7 @@ export const EASY_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
    "designer": manmonth,
    "planner": manmonth,
    "pm": manmonth,
-   "reason": "기간 산정 근거 설명",
+   "reason": "기간 산정 근거 상세하게"  
 }
 
 
@@ -155,7 +189,6 @@ export const MID_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
 6. 프로젝트 내용에 기간이 적혀있더라도 무시하고 위 기준으로 맨먼스를 산정합니다.
 7. 내용이 자세하지 않거나 불법적인 요청이라면 기간을 0으로 산정하세요.
 
-
 응답 형식:
 {
   "frontend": manmonth,
@@ -163,7 +196,7 @@ export const MID_ESTIMATE_SYSTEM_PROMPT = `최종결과를 바탕으로 프로�
    "designer": manmonth,
    "planner": manmonth,
    "pm": manmonth,
-   "reason": "기간 산정 근거 설명",
+   "reason": "기간 산정 근거 상세하게"  
 }
 
 
@@ -204,11 +237,10 @@ export const COMPLEXITY_SYSTEM_PROMPT = `최종결과를 바탕으로 프로젝�
 응답 형식:
 {
   "complexity":"mid",
-   "reasonComplexity": "복잡도를 평가한 근거 제시",
+  "reasonComplexity": "복잡도에 영향을 주는 기능들을 구체적으로 설명하세요. 어떤 기능들 때문에 견적이 상승하는지, 반대로 어떤 방식으로 구현하면 견적을 낮출 수 있는지 실용적인 예시와 함께 상세하게 제시해주세요.",
 }
-
-
 `;
 
 //실시간 데이터 처리와 동시 사용자 처리,
 //동시성 또는 실시간 처리가 필요하지 않고, 주기적인 동작으로 충분한 경우
+//복잡도 평가 근거 제시

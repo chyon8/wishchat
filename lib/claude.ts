@@ -106,7 +106,7 @@ export async function getSummary(answers: Answer[]) {
         {
           role: "user",
           content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-            최종 결과를 정리해주세요.`,
+            최종 결과를 정리하고 추가사항을 제안해주세요.`,
         },
       ],
     });

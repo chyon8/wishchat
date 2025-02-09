@@ -47,6 +47,7 @@ interface SummaryResponse {
   features: string[];
   workRange: string[];
   additional: string;
+  suggestion: string;
 }
 
 interface EstimationResponse {
@@ -79,6 +80,7 @@ interface RegistrationData {
     features: string[];
     workRange: string[];
     additional: string;
+    suggestion: string;
   };
 }
 
