@@ -10,6 +10,7 @@ import { Loader2, AlertCircle, Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import AutoResizeTextarea from "./AutoResizeTextarea";
 import EstimationDisplay from "./estimationDisplay";
 
 import {
@@ -521,7 +522,7 @@ export default function SurveyChat() {
       </Button>
 
       {showTextInput && (
-        <Textarea
+        <AutoResizeTextarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
@@ -538,7 +539,7 @@ export default function SurveyChat() {
   const renderTextInput = () => (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <Textarea
+        <AutoResizeTextarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
