@@ -36,7 +36,7 @@ export const calculateEstimation = (
 
   const totalCost = Object.values(costs).reduce((acc, curr) => acc + curr, 0);
   const optimalEstimate = totalCost * 0.8;
-  const hoguma = optimalEstimate / 2;
+  const hoguma = optimalEstimate * 0.7;
   const maxEstimate = totalCost * 1.0;
 
   /*
