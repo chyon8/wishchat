@@ -10,6 +10,7 @@ import {
   SUMMARY_SYSTEM_PROMPT,
   COMPLEXITY_SYSTEM_PROMPT,
   ESTIMATE_FACTOR_SYSTEM,
+  INSPECTION_SUMMARY_SYSTEM_PROMPT,
 } from "./prompts";
 
 // Interface for the validated/parsed response
@@ -204,4 +205,45 @@ export async function getEstimateFactors(answers: Answer[]): Promise<string> {
   }
 
   return content;
+}
+
+/*
+export async function getSummaryInspection(answers: Answer[]) {
+  const response = await openai.chat.completions.create({
+    model: "o3-mini",
+    reasoning_effort: "medium",
+    messages: [
+      {
+        role: "system",
+        content: INSPECTION_SUMMARY_SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+                최종 결과를 정리해주세요.`,
+      },
+    ],
+  });
+  return response.choices[0].message.content;
+}
+*/
+
+export async function getSummaryInspection(answers: Answer[]) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    temperature: 0.7,
+    max_tokens: 2048,
+    messages: [
+      {
+        role: "system",
+        content: INSPECTION_SUMMARY_SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+                최종 결과를 정리해주세요.`,
+      },
+    ],
+  });
+  return response.choices[0].message.content;
 }

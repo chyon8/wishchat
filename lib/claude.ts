@@ -9,6 +9,7 @@ import {
 import {
   COMPLEXITY_SYSTEM_PROMPT,
   FIRST_QUESTION_PROMPT,
+  INSPECTION_SUMMARY_SYSTEM_PROMPT,
   QUESTION_SYSTEM_PROMPT,
   SUMMARY_SYSTEM_PROMPT,
 } from "./prompts";
@@ -170,4 +171,22 @@ export async function getFirstQuestion(answers: Answer[]) {
     });
     return response as ResponseWithContent;
   }, validateFirstQuestion);
+}
+
+export async function getSummaryInspection(answers: Answer[]) {
+  const response = await anthropic.messages.create({
+    model: "claude-3-5-sonnet-20241022",
+    temperature: 0.5,
+    max_tokens: 2048,
+    system: INSPECTION_SUMMARY_SYSTEM_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+                최종 결과를 정리해주세요.`,
+      },
+    ],
+  });
+
+  return response.content;
 }
