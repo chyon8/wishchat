@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 //import { getSummary } from "@/lib/claude";
-import { getSummaryInspection } from "@/lib/gpt";
-//import { getSummaryInspection } from "@/lib/claude";
+//import { getSummaryInspection } from "@/lib/gpt";
+import { getSummaryInspection } from "@/lib/claude";
 
 export const runtime = "edge";
 
