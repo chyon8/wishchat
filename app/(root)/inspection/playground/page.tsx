@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import AutoResizeTextarea from "@/components/AutoResizeTextarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
+import { INSPECTION_SUMMARY_SYSTEM_PROMPT } from "@/lib/prompts";
 
 // 응답 데이터를 위한 타입 정의
 type ResponseItem = {
@@ -20,19 +21,23 @@ type ApiResponse = {
   [key: string]: any;
 };
 
-export default function Inspection() {
+export default function Playground() {
   const [memo, setMemo] = useState<string>("");
+  const [userPrompt, setUserPrompt] = useState<string>("");
   const [summary, setSummary] = useState<string>("");
   const [editedSummary, setEditedSummary] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("preview");
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [selectedModel, setSelectedModel] = useState("Claude 3.5");
 
   // 로컬 스토리지에서 데이터 불러오기
   useEffect(() => {
     const savedMemo = localStorage.getItem("memo");
     const savedSummary = localStorage.getItem("summary");
+    const savedPrompt = localStorage.getItem("userPrompt");
+
     if (savedMemo) setMemo(savedMemo);
+    if (savedPrompt) setUserPrompt(savedPrompt);
     if (savedSummary) {
       setSummary(savedSummary);
       // 에디터에 표시할 때도 줄바꿈 처리
@@ -40,10 +45,14 @@ export default function Inspection() {
     }
   }, []);
 
-  // 메모와 요약을 로컬 스토리지에 저장
+  // 메모, 프롬프트, 요약을 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem("memo", memo);
   }, [memo]);
+
+  useEffect(() => {
+    localStorage.setItem("userPrompt", userPrompt);
+  }, [userPrompt]);
 
   useEffect(() => {
     localStorage.setItem("summary", summary);
@@ -129,12 +138,16 @@ export default function Inspection() {
     if (!memo.trim()) return;
     setIsLoading(true);
     try {
-      const response = await fetch("/api/inspection/summary", {
+      const response = await fetch("/api/inspection/playground", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ answers: [{ text: memo }] }),
+        body: JSON.stringify({
+          answers: [{ text: memo }],
+          userPrompt: userPrompt,
+          model: selectedModel, // 선택된 모델 전달
+        }),
       });
 
       if (!response.ok) throw new Error("요약 요청 실패");
@@ -166,73 +179,59 @@ export default function Inspection() {
     }
   };
 
+  const handleSetPrompt = () => {
+    setUserPrompt(INSPECTION_SUMMARY_SYSTEM_PROMPT);
+  };
+
   const handleNewMemo = () => {
     setMemo("");
     setSummary("");
     setEditedSummary("");
+    // 프롬프트는 유지할지 여부를 결정
+    // setUserPrompt("");
     localStorage.removeItem("memo");
     localStorage.removeItem("summary");
-  };
-
-  // Word 문서로 다운로드하는 함수
-  const handleDownloadAsWord = async () => {
-    setIsDownloading(true);
-    try {
-      // 현재 활성화된 탭에 따라 다운로드할 내용 선택
-      const contentToDownload =
-        activeTab === "edit" ? editedSummary : summary.replace(/\\n/g, "\n");
-
-      const title = "서비스 기획서";
-      const timestamp = new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace(/:/g, "-");
-      const filename = `${title}_${timestamp}.docx`;
-
-      // 서버로 요청 보내기 (서버 측에서 Word 문서 생성)
-      const response = await fetch("/api/document/generate-word", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: title,
-          content: contentToDownload,
-          originalMemo: memo,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Word 문서 생성 실패");
-
-      // 응답을 Blob으로 받기
-      const blob = await response.blob();
-
-      // 다운로드 링크 생성
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = filename;
-
-      // 링크 클릭으로 다운로드 트리거
-      document.body.appendChild(a);
-      a.click();
-
-      // 리소스 정리
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Word 문서 다운로드 오류:", error);
-      alert("문서 다운로드 중 오류가 발생했습니다.");
-    } finally {
-      setIsDownloading(false);
-    }
+    // localStorage.removeItem("userPrompt");
   };
 
   return (
     <div className="space-y-6 p-4">
       <div className="space-y-2">
-        <h2 className="text-xl font-bold">메모 요약</h2>
+        <div className="flex items-center space-x-2">
+          <h2 className="text-xl font-bold text-slate-400">프롬프트</h2>
+          <Button
+            onClick={handleSetPrompt}
+            className="text-xs px-2 py-1 h-5 min-w-[60px]"
+          >
+            예시
+          </Button>
+        </div>
+        <AutoResizeTextarea
+          value={userPrompt}
+          onChange={(e) => setUserPrompt(e.target.value)}
+          placeholder="LLM에 전달할 시스템 프롬프트를 입력하세요..."
+          className="min-h-[80px] w-full p-2 border-4 rounded"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">모델 선택</label>
+        <select
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="Claude 3.5">Claude 3.5</option>
+          <option value="Claude 3.7">Claude 3.7</option>
+          <option value="GPT 4o">GPT 4o</option>
+          <option value="GPT 4o mini">GPT 4o mini</option>
+        </select>
+      </div>
+
+      <hr />
+
+      <div className="space-y-2">
+        <h2 className="text-xl font-bold">Input</h2>
         <AutoResizeTextarea
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
@@ -244,21 +243,21 @@ export default function Inspection() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                요약 생성 중...
+                생성 중...
               </>
             ) : (
-              "요약 생성"
+              "생성"
             )}
           </Button>
           <Button variant="outline" onClick={handleNewMemo}>
-            새로운 메모
+            새로고침
           </Button>
         </div>
       </div>
 
       {summary && (
         <div className="space-y-2">
-          <h2 className="text-xl font-bold">요약 결과</h2>
+          <h2 className="text-xl font-bold">Output</h2>
           <div className="flex justify-between items-center">
             <Tabs
               defaultValue="preview"
@@ -271,7 +270,7 @@ export default function Inspection() {
                 <TabsTrigger value="edit">수정모드</TabsTrigger>
               </TabsList>
               <TabsContent value="preview" className="pt-2">
-                <div className="p-4 border rounded whitespace-pre-wrap">
+                <div className="p-4 border rounded  whitespace-pre-wrap">
                   {summary.replace(/\\n/g, "\n")}
                 </div>
               </TabsContent>
@@ -284,24 +283,6 @@ export default function Inspection() {
               </TabsContent>
             </Tabs>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleDownloadAsWord}
-            disabled={isDownloading || !summary}
-            className="ml-2"
-          >
-            {isDownloading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                다운로드 중...
-              </>
-            ) : (
-              <>
-                <Download className="mr-2 h-4 w-4" />
-                Word로 다운로드
-              </>
-            )}
-          </Button>
         </div>
       )}
     </div>

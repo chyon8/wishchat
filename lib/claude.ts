@@ -190,3 +190,40 @@ export async function getSummaryInspection(answers: Answer[]) {
 
   return response.content;
 }
+
+export async function playgroundResponse(
+  answers: Answer[],
+  userPrompt: string,
+  model: string
+) {
+  // Claude 모델 이름 매핑
+  const modelMap: { [key: string]: string } = {
+    "Claude 3.5": "claude-3-5-sonnet-20241022",
+    "Claude 3.7": "claude-3-7-sonnet-20250219", // 최신 3.7 모델
+  };
+
+  const claudeModel = modelMap[model] || "claude-3-5-sonnet-20241022";
+
+  const response = await anthropic.messages.create({
+    model: claudeModel,
+    temperature: 0.5,
+    max_tokens: 2048,
+    system: userPrompt,
+    messages: [
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+                최종 결과를 정리해주세요.`,
+      },
+    ],
+  });
+
+  if (Array.isArray(response.content)) {
+    return response.content
+      .filter((item) => item.type === "text")
+      .map((item) => item.text)
+      .join("");
+  }
+
+  return response.content;
+}

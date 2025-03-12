@@ -247,3 +247,36 @@ export async function getSummaryInspection(answers: Answer[]) {
   });
   return response.choices[0].message.content;
 }
+
+export async function gptPlaygroundResponse(
+  answers: Answer[],
+  userPrompt: string,
+  model: string
+) {
+  // GPT 모델 이름 매핑
+  const modelMap: { [key: string]: string } = {
+    "GPT 4o": "gpt-4o",
+    "GPT 4o mini": "gpt-4o-mini",
+  };
+
+  const gptModel = modelMap[model] || "gpt-4o";
+
+  const response = await openai.chat.completions.create({
+    model: gptModel,
+    temperature: 0.5,
+    max_tokens: 2048,
+    messages: [
+      {
+        role: "system",
+        content: userPrompt,
+      },
+      {
+        role: "user",
+        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
+                최종 결과를 정리해주세요.`,
+      },
+    ],
+  });
+
+  return response.choices[0]?.message?.content || "";
+}
