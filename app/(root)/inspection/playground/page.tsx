@@ -276,6 +276,8 @@ export default function Playground() {
           <option value="GPT 4o mini">GPT 4o mini</option>
           <option value="Claude 3.5">Claude 3.5</option>
           <option value="Claude 3.7">Claude 3.7</option>
+          <option value="Gemini 2.0 Flash">Gemini 2.0 Flash</option>
+          <option value="Gemini 2.0 Flash Lite">Gemini 2.0 Flash Lite</option>
         </select>
       </div>
 

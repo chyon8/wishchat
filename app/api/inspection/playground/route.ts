@@ -1,10 +1,9 @@
-// /app/api/inspection/playground/route.ts 수정
 import { NextRequest, NextResponse } from "next/server";
 import { playgroundResponse } from "@/lib/claude";
 import { gptPlaygroundResponse } from "@/lib/gpt";
+import { geminiPlaygroundResponse } from "@/lib/gemini";
 
 export const runtime = "edge";
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -25,6 +24,8 @@ export async function POST(req: NextRequest) {
     // 모델 유형에 따라 다른 API 호출
     if (model && model.startsWith("GPT")) {
       result = await gptPlaygroundResponse(answers, systemPrompt, model);
+    } else if (model && model.startsWith("Gemini")) {
+      result = await geminiPlaygroundResponse(answers, systemPrompt, model);
     } else {
       result = await playgroundResponse(answers, systemPrompt, model);
     }
