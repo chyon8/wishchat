@@ -212,8 +212,8 @@ export async function playgroundResponse(
     messages: [
       {
         role: "user",
-        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-                최종 결과를 정리해주세요.`,
+        content: `input: ${JSON.stringify(answers, null, 2)}
+                응답을 생성하세요.`,
       },
     ],
   });

@@ -11,6 +11,7 @@ import {
   COMPLEXITY_SYSTEM_PROMPT,
   ESTIMATE_FACTOR_SYSTEM,
   INSPECTION_SUMMARY_SYSTEM_PROMPT,
+  RANDOM_PROMPT,
 } from "./prompts";
 
 // Interface for the validated/parsed response
@@ -272,11 +273,37 @@ export async function gptPlaygroundResponse(
       },
       {
         role: "user",
-        content: `모든 답변: ${JSON.stringify(answers, null, 2)}
-                최종 결과를 정리해주세요.`,
+        content: `input: ${JSON.stringify(answers, null, 2)}
+                응답을 생성하세요.`,
       },
     ],
   });
 
   return response.choices[0]?.message?.content || "";
+}
+
+export async function createRandomPrompt(): Promise<string> {
+  const response = (await openai.chat.completions.create({
+    model: "gpt-4o",
+    temperature: 0.7,
+    max_tokens: 2048,
+    messages: [
+      {
+        role: "system",
+        content: RANDOM_PROMPT,
+      },
+      {
+        role: "user",
+        content: `프롬프트를 생성하세요.`,
+      },
+    ],
+  })) as unknown as OpenAIResponse;
+
+  const content = response.choices[0]?.message?.content;
+
+  if (!content) {
+    throw new Error("Failed to get estimate factors from OpenAI");
+  }
+
+  return content;
 }

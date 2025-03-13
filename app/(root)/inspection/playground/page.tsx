@@ -27,8 +27,9 @@ export default function Playground() {
   const [summary, setSummary] = useState<string>("");
   const [editedSummary, setEditedSummary] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPromptLoading, setIsPromptLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("preview");
-  const [selectedModel, setSelectedModel] = useState("Claude 3.5");
+  const [selectedModel, setSelectedModel] = useState("GPT 4o");
 
   // 로컬 스토리지에서 데이터 불러오기
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Playground() {
 
   // 메모, 프롬프트, 요약을 로컬 스토리지에 저장
   useEffect(() => {
-    localStorage.setItem("memo", memo);
+    localStorage.setItem("memoPG", memo);
   }, [memo]);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function Playground() {
   }, [userPrompt]);
 
   useEffect(() => {
-    localStorage.setItem("summary", summary);
+    localStorage.setItem("summaryPG", summary);
   }, [summary]);
 
   // 수정된 요약이 변경될 때마다 바로 저장
@@ -183,6 +184,41 @@ export default function Playground() {
     setUserPrompt(INSPECTION_SUMMARY_SYSTEM_PROMPT);
   };
 
+  const handleRandomPrompt = async () => {
+    setIsPromptLoading(true);
+    try {
+      const response = await fetch("/api/inspection/randomPrompt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("요청 실패");
+
+      let data: ApiResponse;
+      const contentType = response.headers.get("content-type");
+
+      // 응답 형식에 따라 다르게 처리
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        // JSON이 아닌 경우 텍스트로 처리
+        const textData = await response.text();
+        data = { result: textData };
+      }
+
+      // 추출 함수를 사용하여 텍스트만 가져옴
+      const newResult = extractTextFromResponse(data);
+      setUserPrompt(newResult);
+    } catch (error) {
+      console.error("생성 오류:", error);
+      setUserPrompt("");
+    } finally {
+      setIsPromptLoading(false);
+    }
+  };
+
   const handleNewMemo = () => {
     setMemo("");
     setSummary("");
@@ -205,37 +241,52 @@ export default function Playground() {
           >
             예시
           </Button>
+          <Button
+            onClick={handleRandomPrompt}
+            className="bg-slate-600 text-xs px-2 py-1 h-5 min-w-[60px]"
+          >
+            {isPromptLoading ? (
+              <>
+                <Loader2 className="text-xs h-4 w-4 animate-spin" />
+                생성 중...
+              </>
+            ) : (
+              "랜덤 생성"
+            )}
+          </Button>
         </div>
         <AutoResizeTextarea
           value={userPrompt}
           onChange={(e) => setUserPrompt(e.target.value)}
-          placeholder="LLM에 전달할 시스템 프롬프트를 입력하세요..."
+          placeholder="시스템 프롬프트를 입력하세요..."
           className="min-h-[80px] w-full p-2 border-4 rounded"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">모델 선택</label>
+        <label className="text-sm font-medium text-gray-700">
+          응답 모델 선택
+        </label>
         <select
           value={selectedModel}
           onChange={(e) => setSelectedModel(e.target.value)}
           className="w-full p-2 border rounded"
         >
-          <option value="Claude 3.5">Claude 3.5</option>
-          <option value="Claude 3.7">Claude 3.7</option>
           <option value="GPT 4o">GPT 4o</option>
           <option value="GPT 4o mini">GPT 4o mini</option>
+          <option value="Claude 3.5">Claude 3.5</option>
+          <option value="Claude 3.7">Claude 3.7</option>
         </select>
       </div>
 
       <hr />
 
       <div className="space-y-2">
-        <h2 className="text-xl font-bold">Input</h2>
+        <h2 className="text-xl font-bold">입력</h2>
         <AutoResizeTextarea
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
-          placeholder="메모를 입력하세요..."
+          placeholder="내용을 입력하세요..."
           className="min-h-[100px] w-full p-2 border rounded"
         />
         <div className="flex space-x-2">
@@ -257,7 +308,7 @@ export default function Playground() {
 
       {summary && (
         <div className="space-y-2">
-          <h2 className="text-xl font-bold">Output</h2>
+          <h2 className="text-xl font-bold">결과</h2>
           <div className="flex justify-between items-center">
             <Tabs
               defaultValue="preview"
